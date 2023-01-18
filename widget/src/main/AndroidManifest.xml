@@ -24,7 +24,7 @@
         <activity
             android:name="com.exairon.widget.view.ChatActivity"
             android:label="@string/title_activity_chat"
-            android:theme="@style/Theme.ExaironMessengerMobileWidget.NoActionBar"
+            android:theme="@style/NoActionBar"
             android:launchMode="singleTask"
             android:exported="false"
             android:noHistory="true"/>
