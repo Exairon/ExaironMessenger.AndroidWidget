@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="ExtraText">
+
+        <TextView
+            android:id="@+id/button_title"
+            android:background="@drawable/rounded_corner_customer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:padding="7dp"
+            android:text=""
+            android:textSize="18sp"
+            tools:ignore="SmallSp" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/buttonList"
+            app:flexWrap="wrap"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            app:showDivider="beginning|middle"
+            app:dividerDrawable="@drawable/divider"
+            android:layout_height="wrap_content" />
+
+        <include
+            layout="@layout/message_time"
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2sp"
+            android:layout_marginRight="2sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

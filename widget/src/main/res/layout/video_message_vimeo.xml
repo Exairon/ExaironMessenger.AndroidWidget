@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.ct7ct7ct7.androidvimeoplayer.view.VimeoPlayerView
+            android:id="@+id/vimeoPlayerView"
+            android:layout_width="300dp"
+            android:layout_height="220dp"
+            app:aspectRatio="1.778"
+            app:autoPlay="false"
+            app:backgroundColor="#00FFFF"
+            app:loop="false"
+            app:muted="false"
+            app:showFullscreenOption="true"
+            app:showMenuOption="false"
+            app:showOriginalControls="false"
+            app:showTitle="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            app:topicColor="#FFFF00" />
+
+        <include
+            layout="@layout/message_time"
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2sp"
+            android:layout_marginRight="2sp" />
+    </LinearLayout>
+
+</RelativeLayout>

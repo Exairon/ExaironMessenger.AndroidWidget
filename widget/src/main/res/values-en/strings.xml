@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_chat">ChatActivity</string>
+    <string name="formTitle">Please fill in the details completely so that we can keep in touch with you.</string>
+    <string name="formDesc">Fields ending with * are required to be filled.</string>
+    <string name="startSession">Start Session</string>
+    <string name="chatActions">Chat Actions</string>
+    <string name="writeMessage">Write a Message</string>
+    <string name="weRunExairon">We run Exairon</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="file">File</string>
+    <string name="location">Location</string>
+    <string name="sessionFinishMessage">Do you really want to end the session?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="howWasYourExp">How was your experience?</string>
+    <string name="surveyHint">Please tell us about your opinion...</string>
+    <string name="submit">Submit</string>
+    <string name="formError">Please fill in the fields correctly.</string>
+</resources>

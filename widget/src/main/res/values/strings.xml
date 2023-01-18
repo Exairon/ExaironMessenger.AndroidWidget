@@ -1,0 +1,20 @@
+<resources>
+    <string name="title_activity_chat">ChatActivity</string>
+    <string name="formTitle">Sizinle iletişimde kalabilmemiz için lütfen bilgilerinizi eksiksiz doldurunuz</string>
+    <string name="formDesc">* ile biten alanların doldurulması zorunludur.</string>
+    <string name="startSession">Oturumu Başlat</string>
+    <string name="chatActions">Görüşme Aksiyonları</string>
+    <string name="writeMessage">Mesaj Yazın</string>
+    <string name="weRunExairon">We run Exairon</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="file">Dosya</string>
+    <string name="location">Konum</string>
+    <string name="sessionFinishMessage">Gerçekten oturumu bitirmek istiyor musunuz?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="howWasYourExp">Deneyimin nasıldı?</string>
+    <string name="surveyHint">Lütfen bize görüşlerinizi bildirin...</string>
+    <string name="submit">Gönder</string>
+    <string name="formError">Lütfen alanları doğru şekilde doldurunuz.</string>
+</resources>
