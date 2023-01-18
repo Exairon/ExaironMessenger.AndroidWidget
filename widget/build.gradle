@@ -91,7 +91,7 @@ afterEvaluate {
                 from components.release
 
                 groupId = 'com.github.Exairon'
-                artifactId = 'mobile-widget'
+                artifactId = 'android-widget'
                 version = '1.0'
             }
         }
