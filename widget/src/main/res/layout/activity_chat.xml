@@ -141,8 +141,8 @@ tools:context=".view.ChatActivity">
 
         <ImageButton
             android:id="@+id/openMenu"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@drawable/plus"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -1,12 +1,10 @@
 package com.exairon.widget.view
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,12 +14,18 @@ import android.os.*
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.lifecycle.Observer
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.exairon.widget.Exairon
 import com.exairon.widget.R
 import com.exairon.widget.StateManager
@@ -31,6 +35,8 @@ import com.exairon.widget.model.*
 import com.exairon.widget.model.Message
 import com.exairon.widget.model.widgetSettings.WidgetSettings
 import com.exairon.widget.socket.SocketHandler
+import com.exairon.widget.viewmodel.ChatActivityViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.document_dialog.*
@@ -48,13 +54,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import javax.xml.parsers.DocumentBuilderFactory
-import kotlin.collections.ArrayList
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.lifecycle.ViewModelProvider
-import com.exairon.widget.viewmodel.ChatActivityViewModel
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlin.collections.HashMap
 
 class ChatActivity : AppCompatActivity() {
 
@@ -64,9 +63,26 @@ class ChatActivity : AppCompatActivity() {
     var itemDownload : Long = 0
     private lateinit var fileSrc: String
     lateinit var fileName: String
-    var pickedPhoto : Uri? = null
-    var pickedBitMap : Bitmap? = null
     private val mSocket = SocketHandler.getSocket()
+    private var imageUri: Uri? = null
+
+    private val GALLERY_PERMISSION_CODE = 100
+    private val GALLERY_REQUEST_CODE = 101
+
+    private val CAMERA_PERMISSION_CODE = 200
+    private val CAMERA_REQUEST_CODE = 201
+
+    private val DOCUMENT_PERMISSION_CODE = 300
+    private val DOCUMENT_REQUEST_CODE = 301
+    var mimeTypes = arrayOf(
+        "image/*",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
 
     private fun writeUserInfo(user: User) {
         val xmlString = "<root>" +
@@ -490,9 +506,6 @@ class ChatActivity : AppCompatActivity() {
         return message
     }
 
-    private val pickImage = 100
-    private var imageUri: Uri? = null
-
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -742,7 +755,7 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        if (previousMessages.count() == 0 && widgetSettings.triggerRules?.get(0)?.enabled!!) {
+        if (previousMessages.isEmpty() && widgetSettings.triggerRules?.get(0)?.enabled!!) {
             sendMessage(widgetSettings.triggerRules[0].text, true)
         }
 
@@ -767,30 +780,125 @@ class ChatActivity : AppCompatActivity() {
 
             view.findViewById<LinearLayout>(R.id.camera).setOnClickListener {
                 dialog.dismiss()
+                requestCameraPermission()
             }
             view.findViewById<LinearLayout>(R.id.gallery).setOnClickListener {
                 dialog.dismiss()
-                val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-                gallery.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivityForResult(gallery, pickImage)
+                pickPhoto()
             }
             view.findViewById<LinearLayout>(R.id.file).setOnClickListener {
                 dialog.dismiss()
+                pickDocument()
             }
             view.findViewById<LinearLayout>(R.id.location).setOnClickListener {
                 dialog.dismiss()
             }
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == pickImage) {
-            imageUri = data?.data
-            //imageView.setImageURI(imageUri)
+    private fun pickPhoto(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                GALLERY_PERMISSION_CODE)
+        } else {
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(galleryIntent,GALLERY_REQUEST_CODE)
         }
     }
 
+    private fun pickDocument(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                DOCUMENT_PERMISSION_CODE)
+        } else {
+            openDocumentInterface()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            when(requestCode) {
+                GALLERY_PERMISSION_CODE -> {
+                    val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(galleryIntent,GALLERY_REQUEST_CODE)
+                }
+                CAMERA_PERMISSION_CODE -> {
+                    openCameraInterface()
+                }
+                DOCUMENT_PERMISSION_CODE -> {
+                    openDocumentInterface()
+                }
+            }
+        } else {
+            // Permission Error
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d("requestCode", requestCode.toString())
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when(requestCode) {
+                GALLERY_REQUEST_CODE -> {
+                    Log.d("Gallery", "Here!!!!!")
+                }
+                CAMERA_REQUEST_CODE -> {
+                    Log.d("Image", "Here!!!!!!!")
+                }
+                DOCUMENT_REQUEST_CODE -> {
+                    Log.d("Document", "Here!!!!!!!")
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun requestCameraPermission() {
+        // If system os is Marshmallow or Above, we need to request runtime permission
+        val cameraPermissionNotGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_DENIED
+        if (cameraPermissionNotGranted){
+            val permission = arrayOf(Manifest.permission.CAMERA)
+            requestPermissions(permission, CAMERA_PERMISSION_CODE)
+        }
+        else{
+            // Permission already granted
+            openCameraInterface()
+        }
+    }
+
+    private fun openDocumentInterface() {
+        val pdfIntent = Intent(Intent.ACTION_GET_CONTENT)
+        var mimeTypesStr = ""
+        for (mimeType in mimeTypes) {
+            mimeTypesStr += "$mimeType|"
+        }
+        pdfIntent.type = "application/pdf"
+        pdfIntent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(pdfIntent, DOCUMENT_REQUEST_CODE)
+    }
+    private fun openCameraInterface() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, R.string.take_picture)
+        values.put(MediaStore.Images.Media.DESCRIPTION, R.string.take_picture_description)
+        imageUri = this.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        // Create camera intent
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+
+        // Launch intent
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    }
+
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         Exairon.isActive = false
         super.onBackPressed()

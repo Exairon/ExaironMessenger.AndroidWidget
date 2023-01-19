@@ -1,16 +1,12 @@
 package com.example.exaironmessengermobilewidget
 
+import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import com.exairon.widget.Exairon
-import com.exairon.widget.Test
 import com.example.exaironmessengermobilewidget.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -43,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         Exairon.email = "fatih_kesici@gmail.com"
 
         binding.fab.setOnClickListener { view ->
-            //pickPhoto()
             Exairon.startChatActivity(this)
         }
     }
@@ -52,5 +47,4 @@ class MainActivity : AppCompatActivity() {
         Exairon.init(this)
         super.onResume()
     }
-
 }

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:requestLegacyExternalStorage="true"
@@ -14,20 +15,18 @@
         <activity
             android:name="com.exairon.widget.view.FormActivity"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:noHistory="true" />
+            android:launchMode="singleInstance"
+            />
         <activity
             android:name="com.exairon.widget.view.SplashActivity"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:noHistory="true"/>
+            android:launchMode="singleInstance"/>
         <activity
             android:name="com.exairon.widget.view.ChatActivity"
             android:label="@string/title_activity_chat"
             android:theme="@style/NoActionBar"
-            android:launchMode="singleTask"
-            android:exported="false"
-            android:noHistory="true"/>
+            android:launchMode="singleInstance"
+            android:exported="false" />
     </application>
 
 </manifest>
