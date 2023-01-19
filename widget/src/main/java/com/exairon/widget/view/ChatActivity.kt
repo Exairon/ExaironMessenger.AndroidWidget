@@ -181,7 +181,6 @@ class ChatActivity : AppCompatActivity() {
         }
         val fileOutputStream = FileOutputStream(file)
         var oldMessages = text.replace("<root>", "").replace("</root>", "")
-        if (oldMessages.contains("<type>survey</type")) oldMessages = ""
         var xmlString = "<root>" +
                 oldMessages +
                 "<message>" +
@@ -238,7 +237,6 @@ class ChatActivity : AppCompatActivity() {
                 }
                 xmlString += "</cards>"
             }
-            "survey" -> xmlString += "<survey>true</survey>"
 
         }
         xmlString += "</message></root>"
@@ -386,12 +384,6 @@ class ChatActivity : AppCompatActivity() {
                             val attachment = Attachment(payload = payload)
                             message = Message(attachment = attachment, type = messageType, time = messageTime, ruleMessage = rule)
                         }
-                        "survey" -> {
-                            close_session.visibility = View.GONE
-                            chatSendArea.visibility = View.GONE
-                            message = Message(type = messageType)
-                        }
-
                     }
                     message.id = UUID.randomUUID().toString()
                     messageList.add(message)
@@ -487,7 +479,8 @@ class ChatActivity : AppCompatActivity() {
 
     private fun showSurvey(): Message {
         val message = Message(id = UUID.randomUUID().toString(), type = "survey")
-        writeMessage(message)
+        clearMessages()
+        clearSessionInfo()
         if (close_session.visibility === View.VISIBLE) {
             close_session.visibility = View.GONE
         }

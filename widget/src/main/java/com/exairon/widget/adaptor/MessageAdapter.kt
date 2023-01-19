@@ -494,8 +494,6 @@ class MessageAdapter(
                     mSocket.emit("send_survey_result", JSONObject(Gson().toJson(surveyRequest)))
                     val finishReq = SessionRequest(session.conversationId, session.channelId)
                     mSocket.emit("finish_session", JSONObject(Gson().toJson(finishReq)))
-                    clearMessages()
-                    clearSessionInfo()
                     context.onBackPressed()
                 }
 
