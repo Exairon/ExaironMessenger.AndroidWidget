@@ -160,8 +160,6 @@ class SplashActivity : AppCompatActivity() {
             SessionRequest(channel_id = Exairon.channelId)
         }
 
-        var newMessages = ArrayList<Message>()
-
         mSocket.on("session_confirm") { args ->
             if (args[0] != null) {
                 val convId = args[0] as String

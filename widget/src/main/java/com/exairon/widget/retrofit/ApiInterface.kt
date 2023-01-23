@@ -1,10 +1,12 @@
 package com.exairon.widget.retrofit
 
+import com.exairon.widget.model.FileUploadResponse
 import com.exairon.widget.model.MessagesModel
 import com.exairon.widget.model.widgetSettings.WidgetSettings
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ApiInterface {
     @GET("/api/v1/channels/widgetSettings/{channelId}")
@@ -17,4 +19,13 @@ interface ApiInterface {
         @Path("timestamp") timestamp: String,
         @Path("conversationId") conversationId: String
     ) : Call<MessagesModel>
+
+    @Multipart
+    @POST("/uploads/chat")
+    fun uploadFile(
+        @Part file: MultipartBody.Part,
+        @Part("sessionId") sessionId: String
+    ) : Call<FileUploadResponse>
+
 }
+

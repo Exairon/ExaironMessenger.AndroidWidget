@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA"/>
 
@@ -13,14 +13,15 @@
         android:launchMode="singleTask"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.exairon.widget.view.FormActivity"
-            android:exported="false"
-            android:launchMode="singleInstance"
-            />
-        <activity
             android:name="com.exairon.widget.view.SplashActivity"
             android:exported="false"
+            android:noHistory="true"
             android:launchMode="singleInstance"/>
+        <activity
+            android:name="com.exairon.widget.view.FormActivity"
+            android:exported="false"
+            android:noHistory="true"
+            android:launchMode="singleInstance" />
         <activity
             android:name="com.exairon.widget.view.ChatActivity"
             android:label="@string/title_activity_chat"

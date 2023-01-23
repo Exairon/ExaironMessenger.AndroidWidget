@@ -1,20 +1,22 @@
 package com.exairon.widget.view
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.*
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -41,15 +43,16 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.document_dialog.*
 import kotlinx.android.synthetic.main.text_message_bot.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.xmlpull.v1.XmlPullParserException
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -65,6 +68,7 @@ class ChatActivity : AppCompatActivity() {
     lateinit var fileName: String
     private val mSocket = SocketHandler.getSocket()
     private var imageUri: Uri? = null
+    private var state = false
 
     private val GALLERY_PERMISSION_CODE = 100
     private val GALLERY_REQUEST_CODE = 101
@@ -82,7 +86,7 @@ class ChatActivity : AppCompatActivity() {
         "application/vnd.ms-excel",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
+    private lateinit var messageAdapter: MessageAdapter
 
     private fun writeUserInfo(user: User) {
         val xmlString = "<root>" +
@@ -160,7 +164,6 @@ class ChatActivity : AppCompatActivity() {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
 
-
         val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         this.itemDownload = manager.enqueue(request)
 
@@ -196,7 +199,7 @@ class ChatActivity : AppCompatActivity() {
             // Error
         }
         val fileOutputStream = FileOutputStream(file)
-        var oldMessages = text.replace("<root>", "").replace("</root>", "")
+        val oldMessages = text.replace("<root>", "").replace("</root>", "")
         var xmlString = "<root>" +
                 oldMessages +
                 "<message>" +
@@ -205,7 +208,7 @@ class ChatActivity : AppCompatActivity() {
                 "<hours>${message.time?.hours ?: ""}</hours>" +
                 "<timestamp>${message.time?.timestamp ?: ""}</timestamp>" +
                 "</time>" +
-                "<fromCustomer>${message.fromCustomer ?: ""}</fromCustomer>" +
+                "<fromCustomer>${message.fromCustomer?.toString() ?: ""}</fromCustomer>" +
                 "<rule>${message.ruleMessage ?: ""}</rule>" +
                 "<type>${message.type}</type>"
         when(message.type) {
@@ -260,7 +263,7 @@ class ChatActivity : AppCompatActivity() {
         val time = if (message.fromCustomer == true) {
             message.time?.timestamp
         } else {
-            message.time?.timestamp?.toString()
+            message.time?.timestamp
         }
         val lastString = "<root><lastMessageTime>${time ?: ""}</lastMessageTime></root>"
 
@@ -271,7 +274,6 @@ class ChatActivity : AppCompatActivity() {
         fileLastOutputStream.close()
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun readMessage(): ArrayList<Message> {
         try {
             val file = File(context.getExternalFilesDir(null), "messages.xml")
@@ -336,14 +338,14 @@ class ChatActivity : AppCompatActivity() {
                                     buttonList.add(button)
                                 }
                             }
-                            message = Message(text = title, type = messageType, quick_replies = buttonList, time = messageTime, ruleMessage = rule)
+                            message = Message(text = title, fromCustomer = fromCustomer, type = messageType, quick_replies = buttonList, time = messageTime, ruleMessage = rule)
                         }
                         "video" -> {
                             val videoType = getNodeValue("videoType", element)
                             val src = getNodeValue("src", element).replace("&lt;", "<")
                             val payload = Payload(videoType = videoType, src = src)
                             val attachment = Attachment(payload = payload)
-                            message = Message(type = messageType, attachment = attachment, time = messageTime, ruleMessage = rule)
+                            message = Message(type = messageType, attachment = attachment, fromCustomer = fromCustomer, time = messageTime, ruleMessage = rule)
                         }
                         "audio" -> {
                             val src = getNodeValue("src", element).replace("&lt;", "<")
@@ -351,7 +353,7 @@ class ChatActivity : AppCompatActivity() {
                             val attachment = Attachment(payload = payload)
                             val data = CustomData(attachment = attachment)
                             val custom = Custom(data = data)
-                            message = Message(type = messageType, custom = custom, time = messageTime, ruleMessage = rule)
+                            message = Message(type = messageType, custom = custom, time = messageTime, fromCustomer = fromCustomer, ruleMessage = rule)
                         }
                         "document" -> {
                             val originalName = getNodeValue("originalname", element).replace("&lt;", "<")
@@ -360,7 +362,7 @@ class ChatActivity : AppCompatActivity() {
                             val attachment = Attachment(payload = payload)
                             val data = CustomData(attachment = attachment)
                             val custom = Custom(data = data)
-                            message = Message(type = messageType, custom = custom, time = messageTime, ruleMessage = rule)
+                            message = Message(type = messageType, custom = custom, time = messageTime, fromCustomer = fromCustomer, ruleMessage = rule)
                         }
                         "carousel" -> {
                             val cards = ArrayList<com.exairon.widget.model.Element>()
@@ -398,7 +400,7 @@ class ChatActivity : AppCompatActivity() {
                             }
                             val payload = Payload(elements = cards)
                             val attachment = Attachment(payload = payload)
-                            message = Message(attachment = attachment, type = messageType, time = messageTime, ruleMessage = rule)
+                            message = Message(attachment = attachment, type = messageType, time = messageTime, ruleMessage = rule, fromCustomer = fromCustomer)
                         }
                     }
                     message.id = UUID.randomUUID().toString()
@@ -460,13 +462,8 @@ class ChatActivity : AppCompatActivity() {
     fun checkPermission(fileSrc: String, name: String) {
         this.fileSrc = fileSrc
         fileName = name
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
-            }
-            else{
-                startDownloading()
-            }
+        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
         }
         else{
             startDownloading()
@@ -497,16 +494,16 @@ class ChatActivity : AppCompatActivity() {
         val message = Message(id = UUID.randomUUID().toString(), type = "survey")
         clearMessages()
         clearSessionInfo()
-        if (close_session.visibility === View.VISIBLE) {
+        if (close_session.visibility == View.VISIBLE) {
             close_session.visibility = View.GONE
         }
-        if (chatSendArea.visibility === View.VISIBLE){
+        if (chatSendArea.visibility == View.VISIBLE){
             chatSendArea.visibility = View.GONE
         }
         return message
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -523,8 +520,7 @@ class ChatActivity : AppCompatActivity() {
         Locale.setDefault(locale)
         config.setLocale(locale)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            createConfigurationContext(config)
+        createConfigurationContext(config)
         resources.updateConfiguration(config, resources.displayMetrics)
 
         this.setContentView(R.layout.activity_chat)
@@ -539,7 +535,7 @@ class ChatActivity : AppCompatActivity() {
         val messages = ArrayList<Message>()
 
         val messageList: HashMap<String, View> = HashMap<String, View>()
-        val messageAdapter = MessageAdapter(
+        messageAdapter = MessageAdapter(
             this,
             R.layout.text_message_bot,
             messages,
@@ -549,8 +545,9 @@ class ChatActivity : AppCompatActivity() {
 
         val lastMessageTime = getLastMessageTime()
 
-        if (lastMessageTime != null && lastMessageTime.count() > 0 &&
-            session.conversationId != null && session.conversationId!!.count() > 0) {
+        if (lastMessageTime != null && lastMessageTime.isNotEmpty() &&
+            session.conversationId != null && session.conversationId!!.isNotEmpty()
+        ) {
             chatActivityViewModel.getNewMessages(
                 lastMessageTime.toString(),
                 session.conversationId.toString()
@@ -629,7 +626,7 @@ class ChatActivity : AppCompatActivity() {
             runOnUiThread {
                 previousMessages.forEach { prevMessage ->
                     if (prevMessage.ruleMessage != true)
-                        messages.add(prevMessage)
+                        messageAdapter.add(prevMessage)
                 }
             }
         }
@@ -642,36 +639,34 @@ class ChatActivity : AppCompatActivity() {
 
         val botUttered: (Any) -> Unit = { data: Any ->
             val args = (data as Array<*>).map { it.toString() }
-            if (args[0] != null) {
-                val gson = Gson()
-                val message = gson.fromJson(args[0].toString(), Message::class.java)
-                message.id =  UUID.randomUUID().toString()
-                val hours = message.time?.timeObject?.hours
-                val minutes = message.time?.timeObject?.minutes
-                val date = message.time?.timeObject?.date
-                val month = message.time?.timeObject?.month?.plus(1)
-                val year = message.time?.timeObject?.year?.plus(1900)
-                val hoursString =
-                    if (hours!! < 10) "0$hours"
-                    else "$hours"
-                val minutesString =
-                    if (minutes!! < 10) "0$minutes"
-                    else "$minutes"
-                val dateString =
-                    if (date!! < 10) "0$date"
-                    else "$date"
+            val gson = Gson()
+            val message = gson.fromJson(args[0].toString(), Message::class.java)
+            message.id =  UUID.randomUUID().toString()
+            val hours = message.time?.timeObject?.hours
+            val minutes = message.time?.timeObject?.minutes
+            val date = message.time?.timeObject?.date
+            val month = message.time?.timeObject?.month?.plus(1)
+            val year = message.time?.timeObject?.year?.plus(1900)
+            val hoursString =
+                if (hours!! < 10) "0$hours"
+                else "$hours"
+            val minutesString =
+                if (minutes!! < 10) "0$minutes"
+                else "$minutes"
+            val dateString =
+                if (date!! < 10) "0$date"
+                else "$date"
 
-                val messageTime = MessageTime(
-                    day = "$dateString/$month/$year",
-                    hours = "$hoursString:$minutesString",
-                    timestamp = message.time!!.timestamp
-                )
-                message.time = messageTime
-                if (message.type != null) {
-                    writeMessage(message)
-                    runOnUiThread {
-                        messageAdapter.add(message)
-                    }
+            val messageTime = MessageTime(
+                day = "$dateString/$month/$year",
+                hours = "$hoursString:$minutesString",
+                timestamp = message.time!!.timestamp
+            )
+            message.time = messageTime
+            if (message.type != null) {
+                writeMessage(message)
+                runOnUiThread {
+                    messageAdapter.add(message)
                 }
             }
         }
@@ -690,9 +685,9 @@ class ChatActivity : AppCompatActivity() {
                 s: CharSequence, start: Int,
                 before: Int, count: Int,
             ) {
-                if (chatSender.text.count() == 0 && send_button.visibility == View.VISIBLE) {
+                if (chatSender.text.isEmpty() && send_button.visibility == View.VISIBLE) {
                     send_button.visibility = View.GONE
-                } else if (chatSender.text.count() > 0 && send_button.visibility == View.GONE) {
+                } else if (chatSender.text.isNotEmpty() && send_button.visibility == View.GONE) {
                     send_button.visibility = View.VISIBLE
                 }
             }
@@ -717,6 +712,7 @@ class ChatActivity : AppCompatActivity() {
             dialog.show()
         }
 
+        @SuppressLint("SimpleDateFormat")
         fun sendMessage(text: String?, rule: Boolean?) {
             if (session.channelId != null && session.conversationId != null &&
                 session.userToken != null && text?.isNotEmpty()!!
@@ -755,7 +751,7 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        if (previousMessages.isEmpty() && widgetSettings.triggerRules?.get(0)?.enabled!!) {
+        if (previousMessages.isEmpty() && widgetSettings.triggerRules?.size!! > 0 && widgetSettings.triggerRules[0].enabled!!) {
             sendMessage(widgetSettings.triggerRules[0].text, true)
         }
 
@@ -790,9 +786,9 @@ class ChatActivity : AppCompatActivity() {
                 dialog.dismiss()
                 pickDocument()
             }
-            view.findViewById<LinearLayout>(R.id.location).setOnClickListener {
+            /*view.findViewById<LinearLayout>(R.id.location).setOnClickListener {
                 dialog.dismiss()
-            }
+            }*/
         }
     }
     private fun pickPhoto(){
@@ -815,6 +811,7 @@ class ChatActivity : AppCompatActivity() {
             openDocumentInterface()
         }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -839,25 +836,105 @@ class ChatActivity : AppCompatActivity() {
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("Range")
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d("requestCode", requestCode.toString())
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            when(requestCode) {
-                GALLERY_REQUEST_CODE -> {
-                    Log.d("Gallery", "Here!!!!!")
-                }
-                CAMERA_REQUEST_CODE -> {
-                    Log.d("Image", "Here!!!!!!!")
-                }
-                DOCUMENT_REQUEST_CODE -> {
-                    Log.d("Document", "Here!!!!!!!")
+        val chatActivityViewModel = ViewModelProvider(this)[ChatActivityViewModel::class.java]
+        val thisContext = this
+        state = false
+        if (resultCode == Activity.RESULT_OK) {
+            val uri = if (requestCode == CAMERA_REQUEST_CODE) {
+                imageUri
+            } else {
+                data?.data
+            }
+            val cR = context.contentResolver
+            val iStream = contentResolver.openInputStream(uri!!)
+
+            val inputData: ByteArray? = iStream?.buffered()?.use { it.readBytes() }
+            iStream?.close()
+
+            val mime = cR.getType(uri)!!
+            val filename = getFileName(uri)
+
+            contentResolver?.query(uri, null, null, null, null)?.use {
+                if (it.moveToFirst()) {
+                    val requestBody =
+                        inputData!!.toRequestBody(mime.toMediaTypeOrNull(), 0, inputData.size)
+                    val filePart = MultipartBody.Part.createFormData(
+                        "uploadedFileForChat",
+                        filename,
+                        requestBody
+                    )
+                    val session = getSessionInfo()
+                    session.conversationId?.let { it1 ->
+                        chatActivityViewModel.uploadFileForChat(filePart,
+                            it1
+                        )
+                    }!!.observe(thisContext, Observer { uploadResponse ->
+                        if (!state && uploadResponse.status == "success") {
+                            state = true
+                            val uploadData = uploadResponse.data
+                            val user = User.getInstance()
+
+                            val fileModel = FileMessageModel(
+                                document = uploadData?.url,
+                                mimeType = uploadData?.mimeType,
+                                originalname = uploadData?.originalname
+                            )
+                            val model = SendFileMessageModel(
+                                session.channelId!!,
+                                fileModel,
+                                session.conversationId!!,
+                                session.userToken!!,
+                                user
+                            )
+                            mSocket.emit("user_uttered", JSONObject(Gson().toJson(model)))
+
+                            val dayFormat = SimpleDateFormat("dd/M/yyyy")
+                            val hoursFormat = SimpleDateFormat("HH:mm")
+
+                            val currentDay = dayFormat.format(Date())
+
+                            var attachment: Attachment? = null
+                            var custom: Custom? = null
+
+                            val messageType = if (requestCode != DOCUMENT_REQUEST_CODE) {
+                                val payload = Payload(src = uploadData?.url)
+                                attachment = Attachment(payload = payload)
+                                "image"
+                            } else {
+                                val payload = Payload(src = uploadData?.url, originalname = uploadData?.originalname)
+                                val documentAttachment = Attachment(payload = payload)
+                                val data = CustomData(attachment = documentAttachment)
+                                custom = Custom(data = data)
+                                "document"
+                            }
+
+                            val currentHours = hoursFormat.format(Date())
+                            val messageTime = MessageTime(
+                                day = currentDay, hours = currentHours, timestamp = System.currentTimeMillis().toString())
+                            val newMessage = Message(
+                                id =  UUID.randomUUID().toString(),
+                                attachment = attachment,
+                                custom = custom,
+                                fromCustomer = true,
+                                type = messageType,
+                                time = messageTime,
+                            )
+                            writeMessage(newMessage)
+                            runOnUiThread {
+                                messageAdapter.add(newMessage)
+                            }
+                        }
+                    })
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
-
     private fun requestCameraPermission() {
         // If system os is Marshmallow or Above, we need to request runtime permission
         val cameraPermissionNotGranted = ContextCompat.checkSelfPermission(
@@ -874,13 +951,36 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Range")
+    fun getFileName(uri: Uri): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor?.close()
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
+    }
+
     private fun openDocumentInterface() {
         val pdfIntent = Intent(Intent.ACTION_GET_CONTENT)
         var mimeTypesStr = ""
         for (mimeType in mimeTypes) {
             mimeTypesStr += "$mimeType|"
         }
-        pdfIntent.type = "application/pdf"
+        pdfIntent.type = "application/pdf|application/vnd.ms-powerpoint|application/vnd.ms-excel|image/*"
         pdfIntent.addCategory(Intent.CATEGORY_OPENABLE)
         startActivityForResult(pdfIntent, DOCUMENT_REQUEST_CODE)
     }

@@ -169,7 +169,7 @@ class MessageAdapter(
         DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettings.data?.color?.buttonBackColor))
     }
 
-    @SuppressLint("ResourceType")
+    @SuppressLint("ResourceType", "CutPasteId")
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         if (messageList.containsKey(getItem(position)?.id)) {
@@ -445,6 +445,12 @@ class MessageAdapter(
 
                 val documentBtn = convertView.findViewById<Button>(R.id.documentName)
                 documentBtn.text = originalName
+
+                convertView?.findViewById<LinearLayout>(R.id.documentContainer)?.gravity = if (getItem(position)!!.fromCustomer == true) {
+                    Gravity.END
+                } else {
+                    Gravity.START
+                }
 
                 documentBtn.setOnClickListener {
                     if (context is ChatActivity) {
