@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.View
+import android.view.Window
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_form.*
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -95,6 +96,7 @@ class FormActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_form)
 
         binding = ActivityFormBinding.inflate(layoutInflater)

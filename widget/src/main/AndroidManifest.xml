@@ -14,11 +14,13 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name="com.exairon.widget.view.SplashActivity"
+            android:theme="@style/NoActionBar"
             android:exported="false"
             android:noHistory="true"
             android:launchMode="singleInstance"/>
         <activity
             android:name="com.exairon.widget.view.FormActivity"
+            android:theme="@style/NoActionBar"
             android:exported="false"
             android:noHistory="true"
             android:launchMode="singleInstance" />

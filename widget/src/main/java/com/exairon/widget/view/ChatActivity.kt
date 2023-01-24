@@ -6,6 +6,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.*
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -18,6 +20,7 @@ import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -45,7 +48,6 @@ import kotlinx.android.synthetic.main.document_dialog.*
 import kotlinx.android.synthetic.main.text_message_bot.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.w3c.dom.Document
@@ -78,14 +80,6 @@ class ChatActivity : AppCompatActivity() {
 
     private val DOCUMENT_PERMISSION_CODE = 300
     private val DOCUMENT_REQUEST_CODE = 301
-    var mimeTypes = arrayOf(
-        "image/*",
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
     private lateinit var messageAdapter: MessageAdapter
 
     private fun writeUserInfo(user: User) {
@@ -506,6 +500,7 @@ class ChatActivity : AppCompatActivity() {
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_chat)
 
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -798,6 +793,8 @@ class ChatActivity : AppCompatActivity() {
                 GALLERY_PERMISSION_CODE)
         } else {
             val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            galleryIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
+            galleryIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivityForResult(galleryIntent,GALLERY_REQUEST_CODE)
         }
     }
@@ -844,7 +841,7 @@ class ChatActivity : AppCompatActivity() {
         val chatActivityViewModel = ViewModelProvider(this)[ChatActivityViewModel::class.java]
         val thisContext = this
         state = false
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK && (data != null || imageUri != null)) {
             val uri = if (requestCode == CAMERA_REQUEST_CODE) {
                 imageUri
             } else {
@@ -933,6 +930,7 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
         }
+        imageUri = null
         super.onActivityResult(requestCode, resultCode, data)
     }
     private fun requestCameraPermission() {
@@ -976,10 +974,6 @@ class ChatActivity : AppCompatActivity() {
 
     private fun openDocumentInterface() {
         val pdfIntent = Intent(Intent.ACTION_GET_CONTENT)
-        var mimeTypesStr = ""
-        for (mimeType in mimeTypes) {
-            mimeTypesStr += "$mimeType|"
-        }
         pdfIntent.type = "application/pdf|application/vnd.ms-powerpoint|application/vnd.ms-excel|image/*"
         pdfIntent.addCategory(Intent.CATEGORY_OPENABLE)
         startActivityForResult(pdfIntent, DOCUMENT_REQUEST_CODE)
