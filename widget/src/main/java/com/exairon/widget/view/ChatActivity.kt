@@ -19,6 +19,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -41,6 +42,8 @@ import com.exairon.widget.model.Message
 import com.exairon.widget.model.widgetSettings.WidgetSettings
 import com.exairon.widget.socket.SocketHandler
 import com.exairon.widget.viewmodel.ChatActivityViewModel
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -63,14 +66,17 @@ import javax.xml.parsers.DocumentBuilderFactory
 class ChatActivity : AppCompatActivity() {
 
     lateinit var context: Context
-    lateinit var binding: ActivityChatBinding
+    private lateinit var binding: ActivityChatBinding
     private val STORAGE_PERMISSION_CODE: Int = 1000
     var itemDownload : Long = 0
     private lateinit var fileSrc: String
-    lateinit var fileName: String
+    private lateinit var fileName: String
     private val mSocket = SocketHandler.getSocket()
     private var imageUri: Uri? = null
     private var state = false
+    private lateinit var messageAdapter: MessageAdapter
+    private lateinit var session: Session
+    private lateinit var user: User
 
     private val GALLERY_PERMISSION_CODE = 100
     private val GALLERY_REQUEST_CODE = 101
@@ -80,7 +86,6 @@ class ChatActivity : AppCompatActivity() {
 
     private val DOCUMENT_PERMISSION_CODE = 300
     private val DOCUMENT_REQUEST_CODE = 301
-    private lateinit var messageAdapter: MessageAdapter
 
     private fun writeUserInfo(user: User) {
         val xmlString = "<root>" +
@@ -221,6 +226,10 @@ class ChatActivity : AppCompatActivity() {
                 }
                 xmlString += "</buttons>"
             }
+            "location" -> {
+                xmlString += "<latitude>${message.location?.latitude?.toString()}</latitude>" +
+                        "<longitude>${message.location?.longitude?.toString()}</longitude>"
+            }
             "video" -> {
                 xmlString += "<videoType>${message.attachment?.payload?.videoType}</videoType>" +
                         "<src>${message.attachment?.payload?.src?.replace("<", "&lt;")}</src>"
@@ -357,6 +366,14 @@ class ChatActivity : AppCompatActivity() {
                             val data = CustomData(attachment = attachment)
                             val custom = Custom(data = data)
                             message = Message(type = messageType, custom = custom, time = messageTime, fromCustomer = fromCustomer, ruleMessage = rule)
+                        }
+                        "location" -> {
+                            val longitude = getNodeValue("longitude", element).replace("&lt;", "<")
+                            val latitude = getNodeValue("latitude", element).replace("&lt;", "<")
+                            val locationData = LocationDataModel(
+                                latitude = latitude.toDouble(), longitude = longitude.toDouble()
+                            )
+                            message = Message(type = messageType, location = locationData, time = messageTime, fromCustomer = fromCustomer, ruleMessage = rule)
                         }
                         "carousel" -> {
                             val cards = ArrayList<com.exairon.widget.model.Element>()
@@ -497,15 +514,68 @@ class ChatActivity : AppCompatActivity() {
         return message
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private fun sendMessage(text: String?, rule: Boolean?, location: LatLng?) {
+        if (session.channelId != null && session.conversationId != null &&
+            session.userToken != null && (text != null || location != null)
+        ) {
+            var type = "text"
+            var locationDataModel: LocationDataModel? = null
+            if (text != null) {
+                val model = SendMessageModel(
+                    session.channelId!!,
+                    text,
+                    session.conversationId!!,
+                    session.userToken!!,
+                    user
+                )
+                mSocket.emit("user_uttered", JSONObject(Gson().toJson(model)))
+            } else if(location != null) {
+                type = "location"
+                locationDataModel = LocationDataModel(location.latitude, location.longitude)
+                val locationModel = LocationMessageModel(locationDataModel)
+                val model = SendLocationMessageModel(
+                    session.channelId!!,
+                    locationModel,
+                    session.conversationId!!,
+                    session.userToken!!,
+                    user
+                )
+                mSocket.emit("user_uttered", JSONObject(Gson().toJson(model)))
+            }
+
+            val dayFormat = SimpleDateFormat("dd/M/yyyy")
+            val hoursFormat = SimpleDateFormat("HH:mm")
+
+            val currentDay = dayFormat.format(Date())
+
+            val currentHours = hoursFormat.format(Date())
+            val messageTime = MessageTime(
+                day = currentDay, hours = currentHours, timestamp = System.currentTimeMillis().toString())
+            val newMessage = Message(
+                id =  UUID.randomUUID().toString(),
+                text = text,
+                location = locationDataModel,
+                fromCustomer = true,
+                type = type,
+                time = messageTime,
+                ruleMessage = rule
+            )
+            writeMessage(newMessage)
+            runOnUiThread {
+                if (newMessage.ruleMessage != true)
+                    messageAdapter.add(newMessage)
+            }
+        }
+    }
+
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.activity_chat)
 
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         context = this@ChatActivity
         val chatActivityViewModel = ViewModelProvider(this)[ChatActivityViewModel::class.java]
 
@@ -518,12 +588,10 @@ class ChatActivity : AppCompatActivity() {
         createConfigurationContext(config)
         resources.updateConfiguration(config, resources.displayMetrics)
 
-        this.setContentView(R.layout.activity_chat)
-
         val oldSessionId = StateManager.oldSessionId
 
-        val session = getSessionInfo()
-        val user = User.getInstance()
+        session = getSessionInfo()
+        user = User.getInstance()
         val widgetSettings = WidgetSettings.getInstance()
         var previousMessages = ArrayList<Message>()
 
@@ -707,51 +775,17 @@ class ChatActivity : AppCompatActivity() {
             dialog.show()
         }
 
-        @SuppressLint("SimpleDateFormat")
-        fun sendMessage(text: String?, rule: Boolean?) {
-            if (session.channelId != null && session.conversationId != null &&
-                session.userToken != null && text?.isNotEmpty()!!
-            ) {
-                val model = SendMessageModel(
-                    session.channelId!!,
-                    text,
-                    session.conversationId!!,
-                    session.userToken!!,
-                    user
-                )
-                mSocket.emit("user_uttered", JSONObject(Gson().toJson(model)))
-
-                val dayFormat = SimpleDateFormat("dd/M/yyyy")
-                val hoursFormat = SimpleDateFormat("HH:mm")
-
-                val currentDay = dayFormat.format(Date())
-
-                val currentHours = hoursFormat.format(Date())
-                val messageTime = MessageTime(
-                    day = currentDay, hours = currentHours, timestamp = System.currentTimeMillis().toString())
-                val newMessage = Message(
-                    id =  UUID.randomUUID().toString(),
-                    text = text,
-                    fromCustomer = true,
-                    type = "text",
-                    time = messageTime,
-                    ruleMessage = rule
-                )
-                writeMessage(newMessage)
-                runOnUiThread {
-                    if (newMessage.ruleMessage != true)
-                        messageAdapter.add(newMessage)
-                }
-                chatSender.setText("")
+        if (previousMessages.isEmpty() && widgetSettings.triggerRules?.size!! > 0 && widgetSettings.triggerRules[0].enabled!!) {
+            if (widgetSettings.triggerRules[0].text?.isNotEmpty() == true) {
+                sendMessage(widgetSettings.triggerRules[0].text, true, null)
             }
         }
 
-        if (previousMessages.isEmpty() && widgetSettings.triggerRules?.size!! > 0 && widgetSettings.triggerRules[0].enabled!!) {
-            sendMessage(widgetSettings.triggerRules[0].text, true)
-        }
-
         send_button.setOnClickListener {
-            sendMessage(chatSender.text.toString(), false)
+            if (chatSender.text.isNotEmpty()) {
+                sendMessage(chatSender.text.toString(), false, null)
+                chatSender.setText("")
+            }
         }
 
         back_button.setOnClickListener {
@@ -781,11 +815,14 @@ class ChatActivity : AppCompatActivity() {
                 dialog.dismiss()
                 pickDocument()
             }
-            /*view.findViewById<LinearLayout>(R.id.location).setOnClickListener {
+            view.findViewById<LinearLayout>(R.id.location).setOnClickListener {
                 dialog.dismiss()
-            }*/
+                val intent = Intent(this, MapsActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
+
     private fun pickPhoto(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
@@ -809,13 +846,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray,
     ) {
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.isNotEmpty() &&
+            (grantResults[0] == PackageManager.PERMISSION_GRANTED ||
+                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION)) {
             when(requestCode) {
                 GALLERY_PERMISSION_CODE -> {
                     val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -826,6 +864,9 @@ class ChatActivity : AppCompatActivity() {
                 }
                 DOCUMENT_PERMISSION_CODE -> {
                     openDocumentInterface()
+                }
+                STORAGE_PERMISSION_CODE -> {
+                    startDownloading()
                 }
             }
         } else {
@@ -949,6 +990,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        if(StateManager.location != null) {
+            sendMessage(null, false, StateManager.location)
+            StateManager.location = null
+        }
+        super.onResume()
+    }
+
     @SuppressLint("Range")
     fun getFileName(uri: Uri): String {
         var result: String? = null
@@ -1006,5 +1055,8 @@ class ChatActivity : AppCompatActivity() {
 
         super.onDestroy()
     }
+
+
+
 }
 

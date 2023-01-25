@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.Html
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -37,6 +38,7 @@ import com.exairon.widget.model.*
 import com.exairon.widget.model.widgetSettings.WidgetSettings
 import com.exairon.widget.socket.SocketHandler
 import com.exairon.widget.view.ChatActivity
+import com.exairon.widget.view.MapsActivity
 import com.google.android.flexbox.FlexboxLayout
 import com.google.gson.Gson
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -486,6 +488,22 @@ class MessageAdapter(
                     page.scaleY = (0.80f + r * 0.20f)
                 }
                 viewPager.setPageTransformer(compositePageTransformer)
+            }
+            "location" -> {
+                convertView = inflater.inflate(R.layout.location_message, parent, false)
+                val locationBtn = convertView.findViewById<ImageButton>(R.id.location)
+                convertView?.findViewById<LinearLayout>(R.id.locationContainer)?.gravity = if (getItem(position)!!.fromCustomer == true) {
+                    Gravity.END
+                } else {
+                    Gravity.START
+                }
+
+                locationBtn.setOnClickListener {
+                    val intent = Intent(context, MapsActivity::class.java)
+                    intent.putExtra("latitude", getItem(position)?.location?.latitude?.toString())
+                    intent.putExtra("longitude", getItem(position)?.location?.longitude?.toString())
+                    context.startActivity(intent)
+                }
             }
             "survey" -> {
                 var value = "3"

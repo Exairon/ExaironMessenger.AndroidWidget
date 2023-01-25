@@ -2,34 +2,43 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.exairon.widget">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:launchMode="singleTask"
+        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCQsJ4BSowPExfYpKfrD0fMTTq34o1xjeg" />
         <activity
-            android:name="com.exairon.widget.view.SplashActivity"
-            android:theme="@style/NoActionBar"
+            android:name=".view.MapsActivity"
             android:exported="false"
-            android:noHistory="true"
-            android:launchMode="singleInstance"/>
+            android:theme="@style/NoActionBar" />
         <activity
-            android:name="com.exairon.widget.view.FormActivity"
-            android:theme="@style/NoActionBar"
+            android:name=".view.SplashActivity"
             android:exported="false"
-            android:noHistory="true"
-            android:launchMode="singleInstance" />
-        <activity
-            android:name="com.exairon.widget.view.ChatActivity"
-            android:label="@string/title_activity_chat"
-            android:theme="@style/NoActionBar"
             android:launchMode="singleInstance"
-            android:exported="false" />
+            android:noHistory="true"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".view.FormActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".view.ChatActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chat"
+            android:launchMode="singleInstance"
+            android:theme="@style/NoActionBar" />
     </application>
 
 </manifest>

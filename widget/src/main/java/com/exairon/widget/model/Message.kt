@@ -7,6 +7,7 @@ data class Message(
     val type: String? = null,
     var time: MessageTime? = null,
     val message: String? = null,
+    val location: LocationDataModel? = null,
     val custom: Custom? = null,
     val attachment: Attachment? = null,
     val quick_replies: ArrayList<QuickReply>? = null,
