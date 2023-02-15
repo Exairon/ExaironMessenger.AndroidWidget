@@ -28,13 +28,14 @@ class MainActivity : AppCompatActivity() {
 
         //Exairon.src = "http://10.0.96.176:3001"
         //Exairon.channelId = "63a44dfb82dcf01184609988"
-        Exairon.src = "https://test.services.exairon.com"
+        Exairon.src = "https://cafd-212-154-84-123.eu.ngrok.io"
         Exairon.channelId = "63b2bb73f8ef51000a570a9e"
         //Exairon.src = "https://bisu.services.exairon.com"
         //Exairon.channelId = "63beb38a95be6a000ada12b0"
         Exairon.language = "tr"
         Exairon.name = "John"
         Exairon.surname = "Doe"
+        Exairon.user_unique_id = "unique"
         Exairon.phone = "+905555555555"
         Exairon.email = "fatih_kesici@gmail.com"
 

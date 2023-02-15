@@ -96,18 +96,21 @@ class SplashActivity : AppCompatActivity() {
             val surnameElements = rootElement.getElementsByTagName("surname")
             val emailElements = rootElement.getElementsByTagName("email")
             val phoneElements = rootElement.getElementsByTagName("phone")
+            val uniqueIdElements = rootElement.getElementsByTagName("uniqueId")
 
             val nameElement = nameElements.item(0)
             val surnameElement = surnameElements.item(0)
             val emailElement = emailElements.item(0)
             val phoneElement = phoneElements.item(0)
+            val uniqueIdElement = uniqueIdElements.item(0)
 
             val name = nameElement.textContent
             val surname = surnameElement.textContent
             val email = emailElement.textContent
             val phone = phoneElement.textContent
+            val uniqueId = uniqueIdElement.textContent
 
-            return User(email=email, name=name, phone=phone, surname=surname)
+            return User(email=email, name=name, phone=phone, surname=surname, user_unique_id = uniqueId)
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: XmlPullParserException) {
@@ -182,7 +185,7 @@ class SplashActivity : AppCompatActivity() {
                                 formFields.showEmailField && userEmail == null && user?.email == null ||
                                 formFields.showPhoneField && userPhone == null && user?.phone == null)
                     ) {
-                        InitialUser.getInstance(userEmail, userName, userPhone, userSurname)
+                        InitialUser.getInstance(userEmail, userName, userPhone, userSurname, user_unique_id = Exairon.user_unique_id)
                         StateManager.tempSession = Session(
                             conversationId = convId,
                             channelId = req.channel_id,
@@ -195,7 +198,8 @@ class SplashActivity : AppCompatActivity() {
                             name = user?.name ?: userName,
                             surname = user?.surname ?: userSurname,
                             email = user?.email ?: userEmail,
-                            phone = user?.phone ?: userPhone)
+                            phone = user?.phone ?: userPhone,
+                            user_unique_id = Exairon.user_unique_id)
                         if (req.session_id == null || req.session_id == "") {
                             writeSessionInfo(session)
                         }

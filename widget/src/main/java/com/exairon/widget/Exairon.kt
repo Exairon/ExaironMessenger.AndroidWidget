@@ -11,6 +11,7 @@ object Exairon {
     var surname: String? = null
     var email: String? = null
     var phone: String? = null
+    var user_unique_id: String? = null
     var src: String? = null
     var language = "tr"
 

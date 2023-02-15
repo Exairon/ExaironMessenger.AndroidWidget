@@ -203,7 +203,9 @@ class FormActivity : AppCompatActivity() {
                 name = findViewById<EditText>(R.id.name)?.text?.toString(),
                 surname = findViewById<EditText>(R.id.surname)?.text?.toString(),
                 email = findViewById<EditText>(R.id.email)?.text?.toString(),
-                phone = findViewById<EditText>(R.id.phone)?.text?.toString())
+                phone = findViewById<EditText>(R.id.phone)?.text?.toString(),
+                user_unique_id = Exairon.user_unique_id
+                )
 
             val session = StateManager.tempSession
             StateManager.tempSession = null

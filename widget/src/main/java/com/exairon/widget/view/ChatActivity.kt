@@ -93,6 +93,7 @@ class ChatActivity : AppCompatActivity() {
                 "<surname>${user.surname}</surname>" +
                 "<email>${user.email}</email>" +
                 "<phone>${user.phone}</phone>" +
+                "<uniqueId>${user.user_unique_id}</uniqueId>" +
                 "</root>"
         val file = File(context.getExternalFilesDir(null), "user.xml")
         val fileOutputStream = FileOutputStream(file)
