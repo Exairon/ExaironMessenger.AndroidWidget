@@ -13,8 +13,8 @@ tools:context=".view.ChatActivity">
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
+        android:paddingRight="30dp"
+        android:paddingLeft="30dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:fitsSystemWindows="true"
@@ -27,7 +27,6 @@ tools:context=".view.ChatActivity">
             android:background="@drawable/back"
             android:layout_width="12dp"
             android:layout_height="24dp"
-            android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/chat_avatar"
@@ -76,6 +75,7 @@ tools:context=".view.ChatActivity">
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="@drawable/close_session"
+            android:padding="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -84,18 +84,20 @@ tools:context=".view.ChatActivity">
 
     <ListView
         android:id="@+id/listViewMessage"
-        android:transcriptMode="alwaysScroll"
-        android:stackFromBottom="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="10dp"
+        android:background="@color/background"
         android:divider="@android:color/black"
         android:dividerHeight="0dp"
-        android:background="@color/background"
+        android:padding="10dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
         app:layout_constraintBottom_toTopOf="@+id/banner"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar">
+        app:layout_constraintTop_toBottomOf="@+id/top_bar"
+        app:layout_constraintVertical_bias="1.0">
 
     </ListView>
 
