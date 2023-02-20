@@ -13,7 +13,7 @@
     <string name="sessionFinishMessage">Gerçekten oturumu bitirmek istiyor musunuz?</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
-    <string name="howWasYourExp">Deneyimin nasıldı?</string>
+    <string name="howWasYourExp">Görüşme Deneyimin nasıldı?</string>
     <string name="surveyHint">Lütfen bize görüşlerinizi bildirin…</string>
     <string name="submit">Gönder</string>
     <string name="formError">Lütfen alanları doğru şekilde doldurunuz.</string>
