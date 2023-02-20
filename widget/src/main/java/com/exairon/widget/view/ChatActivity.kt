@@ -19,7 +19,6 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -152,6 +151,11 @@ class ChatActivity : AppCompatActivity() {
         DrawableCompat.setTint(closeSessionWrappedDrawable, Color.parseColor(widgetSettings.data?.color?.headerFontColor))
         DrawableCompat.setTint(backButtonWrappedDrawable, Color.parseColor(widgetSettings.data?.color?.headerFontColor))
         DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettings.data?.color?.buttonBackColor))
+
+        if(widgetSettings.data?.whiteLabelWidget == true) {
+            val view = findViewById<LinearLayout>(R.id.banner)
+            view.visibility = View.GONE
+        }
     }
 
     private fun startDownloading() {
