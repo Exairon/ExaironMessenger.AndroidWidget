@@ -22,43 +22,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title">
 
         <ImageButton
             android:id="@+id/survey1"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.20"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             android:background="@drawable/survey1_passive" />
 
         <ImageButton
             android:id="@+id/survey2"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.20"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             android:background="@drawable/survey2_passive" />
 
         <ImageButton
             android:id="@+id/survey3"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.20"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             android:background="@drawable/survey3" />
 
         <ImageButton
             android:id="@+id/survey4"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.20"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             android:background="@drawable/survey4_passive" />
 
         <ImageButton
             android:id="@+id/survey5"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.20"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             android:background="@drawable/survey5_passive" />
     </LinearLayout>
 
