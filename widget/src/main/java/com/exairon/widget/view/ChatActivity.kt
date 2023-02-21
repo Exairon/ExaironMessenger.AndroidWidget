@@ -19,6 +19,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -576,6 +577,34 @@ class ChatActivity : AppCompatActivity() {
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
+        val widgetSettings = WidgetSettings.getInstance()
+
+        when(widgetSettings.data?.font) {
+            "Arial" -> setTheme(R.style.Arial)
+            "Baloo-2" -> setTheme(R.style.Baloo2)
+            "Calibri" -> setTheme(R.style.Calibri)
+            "Cambria" -> setTheme(R.style.Cambria)
+            "Comfortaa" -> setTheme(R.style.Comfortaa)
+            "Georgia" -> setTheme(R.style.Georgia)
+            "Helvetica" -> setTheme(R.style.Helvetica)
+            "Inter" -> setTheme(R.style.Inter)
+            "Kollektif" -> setTheme(R.style.Kollektif)
+            "Lato" -> setTheme(R.style.Lato)
+            "Lucida Sans" -> setTheme(R.style.LucidaSans)
+            "Manrope" -> setTheme(R.style.Manrope)
+            "Montserrat" -> setTheme(R.style.Montserrat)
+            "Mulish" -> setTheme(R.style.Mulish)
+            "Open Sans" -> setTheme(R.style.OpenSans)
+            "Oswald" -> setTheme(R.style.Oswald)
+            "Poppins" -> setTheme(R.style.Poppins)
+            "Roboto" -> setTheme(R.style.Roboto)
+            "San Francisco" -> setTheme(R.style.SanFrancisco)
+            "Times New Roman" -> setTheme(R.style.TimesNewRoman)
+            "Trebuchet MS" -> setTheme(R.style.TrebuchetMS)
+            "Verdana" -> setTheme(R.style.Verdana)
+            else -> setTheme(R.style.OpenSans)
+        }
+
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
@@ -597,7 +626,6 @@ class ChatActivity : AppCompatActivity() {
 
         session = getSessionInfo()
         user = User.getInstance()
-        val widgetSettings = WidgetSettings.getInstance()
         var previousMessages = ArrayList<Message>()
 
         val messages = ArrayList<Message>()

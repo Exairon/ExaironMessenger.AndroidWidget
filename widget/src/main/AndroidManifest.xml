@@ -21,25 +21,25 @@
             android:name=".view.MapsActivity"
             android:exported="false"
             android:noHistory="true"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/OpenSans" />
         <activity
             android:name=".view.SplashActivity"
             android:exported="false"
             android:launchMode="singleInstance"
             android:noHistory="true"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/OpenSans" />
         <activity
             android:name=".view.FormActivity"
             android:exported="false"
             android:launchMode="singleInstance"
             android:noHistory="true"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/OpenSans" />
         <activity
             android:name=".view.ChatActivity"
             android:exported="false"
             android:label="@string/title_activity_chat"
             android:launchMode="singleInstance"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/OpenSans" />
     </application>
 
 </manifest>

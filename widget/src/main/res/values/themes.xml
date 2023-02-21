@@ -1,9 +1,135 @@
 <resources>
 
-    <style name="NoActionBar">
+    <style name="Arial">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/arial</item>
+    </style>
+
+    <style name="Baloo2">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/baloo2</item>
+    </style>
+
+    <style name="Calibri">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/calibri</item>
+    </style>
+
+    <style name="Cambria">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/cambria</item>
+    </style>
+
+    <style name="Comfortaa">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+    </style>
+
+    <style name="Georgia">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/georgia</item>
+    </style>
+
+    <style name="Helvetica">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/helvetica</item>
+    </style>
+
+    <style name="Inter">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="Kollektif">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/kollektif</item>
+    </style>
+
+    <style name="Lato">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/lato</item>
+    </style>
+
+    <style name="LucidaSans">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/lucidasans</item>
+    </style>
+
+    <style name="Manrope">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/manrope</item>
+    </style>
+
+    <style name="Montserrat">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+
+    <style name="Mulish">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/mulish</item>
+    </style>
+
+    <style name="OpenSans">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:fontFamily">@font/opensans</item>
+    </style>
+
+    <style name="Oswald">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/oswald</item>
+    </style>
+
+    <style name="Poppins">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/poppins</item>
+    </style>
+
+    <style name="Roboto">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="SanFrancisco">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/sanfrancisco</item>
+    </style>
+
+    <style name="TimesNewRoman">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/timesnewroman</item>
+    </style>
+
+    <style name="TrebuchetMS">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/trebuchetms</item>
+    </style>
+
+    <style name="Verdana">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/verdana</item>
     </style>
 
     <color name="white">#FFFFFF</color>
