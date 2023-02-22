@@ -16,6 +16,7 @@
     <string name="howWasYourExp">Görüşme Deneyimin nasıldı?</string>
     <string name="surveyHint">Lütfen bize görüşlerinizi bildirin…</string>
     <string name="submit">Gönder</string>
+    <string name="skip">Atla</string>
     <string name="formError">Lütfen alanları doğru şekilde doldurunuz.</string>
     <string name="take_picture">Fotoğrag Seç</string>
     <string name="take_picture_description">Bir fotoğraf seç</string>

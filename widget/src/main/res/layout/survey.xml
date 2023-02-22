@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:padding="30dp"
+    android:paddingVertical="30dp"
     android:layout_height="match_parent">
 
     <TextView
@@ -21,7 +21,7 @@
         android:id="@+id/emojiLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:paddingVertical="10dp"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:ems="10"
+        android:layout_marginHorizontal="30dp"
         android:hint="@string/surveyHint"
         android:padding="10dp"
         android:background="@drawable/edit_text"
@@ -84,19 +85,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emojiLayout" />
 
-    <Button
-        android:id="@+id/submitBtn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="15dp"
-        android:textSize="15sp"
-        android:text="@string/submit"
-        android:background="@drawable/submit_button"
-        android:textColor="@color/white"
+        android:paddingHorizontal="30dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surveyTextArea" />
+        app:layout_constraintTop_toBottomOf="@+id/surveyTextArea">
+
+        <Button
+            android:id="@+id/cancelSurveyBtn"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_button"
+            android:padding="15dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/skip"
+            android:textColor="@color/blue"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/submitBtn"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
+            android:background="@drawable/submit_button"
+            android:padding="15dp"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

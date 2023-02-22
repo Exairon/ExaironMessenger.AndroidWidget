@@ -17,6 +17,7 @@
     <string name="howWasYourExp">How was your experience?</string>
     <string name="surveyHint">Please tell us about your opinion...</string>
     <string name="submit">Submit</string>
+    <string name="skip">Skip</string>
     <string name="formError">Please fill in the fields correctly.</string>
     <string name="take_picture">Take Picture</string>
     <string name="take_picture_description">Take a picture</string>
