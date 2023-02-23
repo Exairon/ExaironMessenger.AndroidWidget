@@ -143,7 +143,9 @@
     <color name="gray">#6C6D6F</color>
     <color name="blue">#1484A3</color>
     <color name="background">#f5f5f5</color>
-    <color name="green">#026D3A</color>
+    <color name="green">#21E554</color>
+    <color name="document_background">#E1E1E1</color>
+    <color name="document_color">#BD0E0E</color>
 
     <style name="roundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
