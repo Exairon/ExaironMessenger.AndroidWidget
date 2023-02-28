@@ -138,9 +138,9 @@ class SplashActivity : AppCompatActivity() {
         if (Exairon.channelId != null) {
             channelIdParams = Exairon.channelId!!
             userName = Exairon.name
-            userSurname = Exairon.surname!!
-            userEmail = Exairon.email!!
-            userPhone = Exairon.phone!!
+            userSurname = Exairon.surname
+            userEmail = Exairon.email
+            userPhone = Exairon.phone
             Service.getInstance(Exairon.src!!)
         } else {
             val session = getSessionInfo()
