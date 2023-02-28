@@ -180,10 +180,10 @@ class SplashActivity : AppCompatActivity() {
                     val formFields = widgetSettingsData.data?.formFields
                     if ((req.session_id == null || req.session_id == "") &&
                         (widgetSettingsData.data?.showUserForm!! &&
-                                formFields?.showNameField!! && userName == null && user?.name == null ||
-                                formFields?.showSurnameField!! && userSurname == null && user?.surname == null ||
-                                formFields.showEmailField && userEmail == null && user?.email == null ||
-                                formFields.showPhoneField && userPhone == null && user?.phone == null)
+                                formFields?.showNameField!! && (userName == null || userName == "") && user?.name == null ||
+                                formFields?.showSurnameField!! && (userSurname == null || userSurname == "") && user?.surname == null ||
+                                formFields.showEmailField && (userEmail == null || userEmail == "") && user?.email == null ||
+                                formFields.showPhoneField && (userPhone == null ||userPhone == "") && user?.phone == null)
                     ) {
                         InitialUser.getInstance(userEmail, userName, userPhone, userSurname, user_unique_id = Exairon.user_unique_id)
                         StateManager.tempSession = Session(
