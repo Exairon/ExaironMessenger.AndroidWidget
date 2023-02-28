@@ -18,7 +18,12 @@
         <EditText
             android:id="@+id/form_field_input"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:inputType="textPersonName" />
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text=""
+            android:singleLine="true"
+            android:focusableInTouchMode="true"
+            android:imeOptions="actionDone|flagNoEnterAction"
+            android:inputType="textMultiLine" />
 
 </LinearLayout>

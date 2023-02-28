@@ -101,6 +101,35 @@ tools:context=".view.ChatActivity">
 
     </ListView>
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/form_field_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="SmallSp" />
+
+        <EditText
+            android:id="@+id/form_field_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text=""
+            android:singleLine="true"
+            android:focusableInTouchMode="true"
+            android:imeOptions="actionDone|flagNoEnterAction"
+            android:inputType="textMultiLine" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"

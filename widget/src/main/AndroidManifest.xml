@@ -32,6 +32,7 @@
             android:name=".view.FormActivity"
             android:exported="false"
             android:launchMode="singleInstance"
+            android:windowSoftInputMode="stateVisible"
             android:noHistory="true"
             android:theme="@style/OpenSans" />
         <activity

@@ -6,35 +6,37 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import kotlinx.android.synthetic.main.activity_form.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.exairon.widget.Exairon
 import com.exairon.widget.R
-import com.exairon.widget.adaptor.FormAdapter
+import com.exairon.widget.StateManager
 import com.exairon.widget.databinding.ActivityFormBinding
 import com.exairon.widget.model.InitialUser
-import com.exairon.widget.model.widgetSettings.FormElement
-import com.exairon.widget.model.widgetSettings.WidgetSettings
-import com.exairon.widget.Exairon
-import com.exairon.widget.StateManager
 import com.exairon.widget.model.Service
 import com.exairon.widget.model.Session
 import com.exairon.widget.model.User
+import com.exairon.widget.model.widgetSettings.FormElement
+import com.exairon.widget.model.widgetSettings.WidgetSettings
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.android.synthetic.main.activity_form.chat_avatar
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 import java.util.concurrent.Executors
-import kotlin.collections.ArrayList
+
 
 class FormActivity : AppCompatActivity() {
 
@@ -64,6 +66,7 @@ class FormActivity : AppCompatActivity() {
 
         topBorView.setBackgroundColor(Color.parseColor(colors?.headerColor))
         startSessionBtn.setBackgroundColor(Color.parseColor(colors?.headerColor))
+        startSessionBtn.setTextColor(Color.parseColor(colors?.headerFontColor))
 
         greetingTitleView.text = messages?.headerTitle
         greetingTitleView.setTextColor(Color.parseColor(colors?.headerFontColor))
@@ -89,6 +92,9 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun isValidPhone(target: CharSequence): Boolean {
+        if (target.isEmpty()) {
+            return false
+        }
         val phoneUtil = PhoneNumberUtil.getInstance()
         val phoneNumber = phoneUtil.parse(target, null)
         return phoneUtil.isValidNumber(phoneNumber)
@@ -168,29 +174,39 @@ class FormActivity : AppCompatActivity() {
 
         setWidgetProperties(widgetSettings)
 
-        val formFields = ArrayList<FormElement>()
-        val lvm: ListView = findViewById<View>(R.id.form_list) as ListView
-        val fieldList: HashMap<String, View> = HashMap<String, View>()
-        val formAdapter = FormAdapter(this, R.layout.form_field, formFields, fieldList)
-        lvm.adapter = formAdapter
-
         val formFieldsData = widgetSettings.data?.formFields
 
-        if (formFieldsData!!.showNameField) {
-            val field = FormElement("Name", required = formFieldsData.nameFieldRequired, user.name)
-            formAdapter.add(field)
+        if (!formFieldsData!!.showNameField) {
+            nameField.visibility = View.INVISIBLE
+            val params: ViewGroup.LayoutParams = nameField.layoutParams
+            params.height = 0
+            nameField.layoutParams = params
+        } else if (formFieldsData.nameFieldRequired) {
+            nameText.text = "Name*"
         }
-        if (formFieldsData.showSurnameField) {
-            val field = FormElement("Surname", required = formFieldsData.surnameFieldRequired, user.surname)
-            formAdapter.add(field)
+        if (!formFieldsData.showSurnameField) {
+            surnameField.visibility = View.INVISIBLE
+            val params: ViewGroup.LayoutParams = surnameField.layoutParams
+            params.height = 0
+            surnameField.layoutParams = params
+        } else if (formFieldsData.surnameFieldRequired) {
+            surnameText.text = "Surname*"
         }
-        if (formFieldsData.showEmailField) {
-            val field = FormElement("E-Mail", required = formFieldsData.emailFieldRequired, user.email)
-            formAdapter.add(field)
+        if (!formFieldsData.showEmailField) {
+            emailField.visibility = View.INVISIBLE
+            val params: ViewGroup.LayoutParams = emailField.layoutParams
+            params.height = 0
+            emailField.layoutParams = params
+        } else if (formFieldsData.emailFieldRequired) {
+            emailText.text = "Email*"
         }
-        if (formFieldsData.showPhoneField) {
-            val field = FormElement("Phone", required = formFieldsData.phoneFieldRequired, user.phone)
-            formAdapter.add(field)
+        if (!formFieldsData.showPhoneField) {
+            phoneField.visibility = View.INVISIBLE
+            val params: ViewGroup.LayoutParams = phoneField.layoutParams
+            params.height = 0
+            phoneField.layoutParams = params
+        } else if (formFieldsData.phoneFieldRequired) {
+            phoneText.text = "Phone*"
         }
 
         fun isValidForm(): Boolean {
@@ -199,24 +215,32 @@ class FormActivity : AppCompatActivity() {
             val emailView = findViewById<EditText>(R.id.email)
             val phoneView = findViewById<EditText>(R.id.phone)
 
-            if (formFieldsData.nameFieldRequired && nameView.text.count() == 0)
-                return false
-            if (formFieldsData.surnameFieldRequired && surnameView.text.count() == 0)
-                return false
-            if (formFieldsData.showEmailField &&
-                ((formFieldsData.emailFieldRequired || emailView.text.count() > 0) &&
-                        !isValidEmail(emailView.text)))
-                return false
-            if (formFieldsData.showPhoneField &&
-                ((formFieldsData.phoneFieldRequired || phoneView.text.count() > 0) &&
-                        !isValidPhone(phoneView.text)))
-                return false
+            if (formFieldsData != null) {
+                if (formFieldsData.nameFieldRequired && nameView.text.isEmpty())
+                    return false
+            }
+            if (formFieldsData != null) {
+                if (formFieldsData.surnameFieldRequired && surnameView.text.isEmpty())
+                    return false
+            }
+            if (formFieldsData != null) {
+                if (formFieldsData.showEmailField &&
+                    ((formFieldsData.emailFieldRequired || emailView.text.isNotEmpty()) &&
+                            !isValidEmail(emailView.text)))
+                    return false
+            }
+            if (formFieldsData != null) {
+                if (formFieldsData.showPhoneField &&
+                    ((formFieldsData.phoneFieldRequired || phoneView.text.isNotEmpty()) &&
+                            !isValidPhone(phoneView.text)))
+                    return false
+            }
             return true
         }
 
         fun showInvalidMessage() {
             val errorView = findViewById<TextView>(R.id.form_error)
-            errorView.setTextColor(Color.parseColor("#ff0000"))
+            errorView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12F)
         }
 
         start_session.setOnClickListener {
