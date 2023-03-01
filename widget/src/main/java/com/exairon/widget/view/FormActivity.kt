@@ -164,10 +164,6 @@ class FormActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<ImageButton>(R.id.back_button).setOnClickListener {
-            this.onBackPressed()
-        }
-
         this.setContentView(R.layout.activity_form)
 
         val user = InitialUser.getInstance()
@@ -207,6 +203,19 @@ class FormActivity : AppCompatActivity() {
             phoneField.layoutParams = params
         } else if (formFieldsData.phoneFieldRequired) {
             phoneText.text = "${phoneText.text}*"
+        }
+
+        if (Exairon.name != null && formFieldsData.showNameField) {
+            name.setText(Exairon.name)
+        }
+        if (Exairon.surname != null && formFieldsData.showSurnameField) {
+            surname.setText(Exairon.surname)
+        }
+        if (Exairon.email != null && formFieldsData.showEmailField) {
+            email.setText(Exairon.email)
+        }
+        if (Exairon.phone != null && formFieldsData.showPhoneField) {
+            phone.setText(Exairon.phone)
         }
 
         fun isValidForm(): Boolean {
@@ -267,6 +276,11 @@ class FormActivity : AppCompatActivity() {
                 val intent = Intent(this, ChatActivity::class.java)
                 startActivity(intent)
             }
+        }
+
+
+        back_button_form.setOnClickListener {
+            this.onBackPressed()
         }
     }
 
