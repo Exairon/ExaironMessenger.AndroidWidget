@@ -14,7 +14,6 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -26,10 +25,10 @@ import com.exairon.widget.model.InitialUser
 import com.exairon.widget.model.Service
 import com.exairon.widget.model.Session
 import com.exairon.widget.model.User
-import com.exairon.widget.model.widgetSettings.FormElement
 import com.exairon.widget.model.widgetSettings.WidgetSettings
+import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import kotlinx.android.synthetic.main.activity_chat.*
+import com.hbb20.CountryCodePicker
 import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.android.synthetic.main.activity_form.chat_avatar
 import java.io.File
@@ -37,12 +36,11 @@ import java.io.FileOutputStream
 import java.util.*
 import java.util.concurrent.Executors
 
-
 class FormActivity : AppCompatActivity() {
 
     lateinit var context: Context
     lateinit var binding: ActivityFormBinding
-
+    private lateinit var countryCodePicker :CountryCodePicker
     private fun setWidgetProperties(widgetSettings: WidgetSettings) {
         // Data
         val messages = if (widgetSettings.data?.messages?.size == 1) {
@@ -92,14 +90,11 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun isValidPhone(target: CharSequence): Boolean {
-        var phone = target
+        var phone = "${countryCodePicker.selectedCountryCodeWithPlus}${target}"
         if (phone.isEmpty()) {
             return false
         }
         try {
-            if (!phone.contains("+")) {
-                phone = "+${phone}"
-            }
             val phoneUtil = PhoneNumberUtil.getInstance()
             val phoneNumber = phoneUtil.parse(phone, null)
             return phoneUtil.isValidNumber(phoneNumber)
@@ -180,6 +175,23 @@ class FormActivity : AppCompatActivity() {
 
         val formFieldsData = widgetSettings.data?.formFields
 
+        var phoneNumberUtil = PhoneNumberUtil.getInstance()
+        countryCodePicker = findViewById(R.id.countyCodePicker)
+        countryCodePicker.setCountryForNameCode("TR")
+
+        fun getCountryIsoCode(number: String): String? {
+            val validatedNumber = if (number.startsWith("+")) number else "+$number"
+
+            val phoneNumber = try {
+                phoneNumberUtil.parse(validatedNumber, null)
+            } catch (e: NumberParseException) {
+                println("error during parsing a number")
+                null
+            } ?: return null
+
+            return phoneNumberUtil.getRegionCodeForCountryCode(phoneNumber.countryCode)
+        }
+
         if (!formFieldsData!!.showNameField) {
             nameField.visibility = View.INVISIBLE
             val params: ViewGroup.LayoutParams = nameField.layoutParams
@@ -223,7 +235,19 @@ class FormActivity : AppCompatActivity() {
             email.setText(Exairon.email)
         }
         if (Exairon.phone != null && formFieldsData.showPhoneField) {
-            phone.setText(Exairon.phone)
+            val phoneUtil = PhoneNumberUtil.getInstance()
+            try {
+                val phoneNumber = phoneUtil.parse(Exairon.phone, null)
+                val countryCode = getCountryIsoCode(Exairon.phone!!)
+                if (countryCode != null) {
+                    println(countryCode)
+                    countryCodePicker.setCountryForNameCode(countryCode)
+                    phone.setText(Exairon.phone!!.replace(phoneNumber.countryCode.toString(), "").replace("+", ""))
+                }
+            } catch (e: Exception) {
+                phone.setText(Exairon.phone!!.replace("+", ""))
+            }
+
         }
 
         fun isValidForm(): Boolean {
@@ -270,7 +294,7 @@ class FormActivity : AppCompatActivity() {
                 name = findViewById<EditText>(R.id.name)?.text?.toString(),
                 surname = findViewById<EditText>(R.id.surname)?.text?.toString(),
                 email = findViewById<EditText>(R.id.email)?.text?.toString(),
-                phone = findViewById<EditText>(R.id.phone)?.text?.toString(),
+                phone = "${countryCodePicker.selectedCountryCodeWithPlus}${findViewById<EditText>(R.id.phone)?.text?.toString()}",
                 user_unique_id = Exairon.user_unique_id
                 )
 

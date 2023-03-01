@@ -81,6 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:text="@string/formTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -118,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="true"
                 android:text=""
+                android:textSize="18dp"
                 android:hint="@string/nameHint"
                 android:singleLine="true"
                 android:focusableInTouchMode="true"
@@ -153,6 +155,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="true"
                 android:text=""
+                android:textSize="18dp"
                 android:hint="@string/surnameHint"
                 android:singleLine="true"
                 android:focusableInTouchMode="true"
@@ -188,6 +191,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="true"
                 android:text=""
+                android:textSize="18dp"
                 android:hint="@string/emailHint"
                 android:singleLine="true"
                 android:focusableInTouchMode="true"
@@ -217,18 +221,27 @@
                 android:textSize="20sp"
                 tools:ignore="SmallSp" />
 
-            <EditText
-                android:id="@+id/phone"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="true"
-                android:text=""
-                android:hint="@string/phoneHint"
-                android:singleLine="true"
-                android:focusableInTouchMode="true"
-                android:imeOptions="actionDone|flagNoEnterAction"
-                android:inputType="text" />
-
+                android:gravity="center"
+                android:layout_height="wrap_content">
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/countyCodePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="true"
+                    android:text=""
+                    android:hint="@string/phoneHint"
+                    android:singleLine="true"
+                    android:textSize="18dp"
+                    android:focusableInTouchMode="true"
+                    android:imeOptions="actionDone|flagNoEnterAction"
+                    android:inputType="phone" />
+            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
