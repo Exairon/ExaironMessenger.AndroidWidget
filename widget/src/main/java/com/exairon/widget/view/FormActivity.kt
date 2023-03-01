@@ -182,7 +182,7 @@ class FormActivity : AppCompatActivity() {
             params.height = 0
             nameField.layoutParams = params
         } else if (formFieldsData.nameFieldRequired) {
-            nameText.text = "Name*"
+            nameText.text = "${nameText.text}*"
         }
         if (!formFieldsData.showSurnameField) {
             surnameField.visibility = View.INVISIBLE
@@ -190,7 +190,7 @@ class FormActivity : AppCompatActivity() {
             params.height = 0
             surnameField.layoutParams = params
         } else if (formFieldsData.surnameFieldRequired) {
-            surnameText.text = "Surname*"
+            surnameText.text = "${surnameText.text}*"
         }
         if (!formFieldsData.showEmailField) {
             emailField.visibility = View.INVISIBLE
@@ -198,7 +198,7 @@ class FormActivity : AppCompatActivity() {
             params.height = 0
             emailField.layoutParams = params
         } else if (formFieldsData.emailFieldRequired) {
-            emailText.text = "Email*"
+            emailText.text = "${emailText.text}*"
         }
         if (!formFieldsData.showPhoneField) {
             phoneField.visibility = View.INVISIBLE
@@ -206,7 +206,7 @@ class FormActivity : AppCompatActivity() {
             params.height = 0
             phoneField.layoutParams = params
         } else if (formFieldsData.phoneFieldRequired) {
-            phoneText.text = "Phone*"
+            phoneText.text = "${phoneText.text}*"
         }
 
         fun isValidForm(): Boolean {

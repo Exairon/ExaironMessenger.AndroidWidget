@@ -21,4 +21,12 @@
     <string name="formError">Please fill in the fields correctly.</string>
     <string name="take_picture">Take Picture</string>
     <string name="take_picture_description">Take a picture</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="email">E-mail</string>
+    <string name="phone">Phone</string>
+    <string name="nameHint">Please enter your name</string>
+    <string name="surnameHint">Please enter your surname</string>
+    <string name="emailHint">Please enter your email</string>
+    <string name="phoneHint">Please enter your phone</string>
 </resources>

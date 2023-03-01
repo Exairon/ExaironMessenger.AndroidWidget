@@ -20,4 +20,12 @@
     <string name="formError">Lütfen alanları doğru şekilde doldurunuz.</string>
     <string name="take_picture">Fotoğrag Seç</string>
     <string name="take_picture_description">Bir fotoğraf seç</string>
+    <string name="name">Ad</string>
+    <string name="surname">Soyad</string>
+    <string name="email">E-posta</string>
+    <string name="phone">Telefon</string>
+    <string name="nameHint">Lütfen adınızı giriniz</string>
+    <string name="surnameHint">Lütfen soyadınızı giriniz</string>
+    <string name="emailHint">Lütfen e-posta adresinizi giriniz</string>
+    <string name="phoneHint">Lütfen telefon numaranızı giriniz</string>
 </resources>
