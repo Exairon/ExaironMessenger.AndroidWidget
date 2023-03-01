@@ -92,12 +92,20 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun isValidPhone(target: CharSequence): Boolean {
-        if (target.isEmpty()) {
+        var phone = target
+        if (phone.isEmpty()) {
             return false
         }
-        val phoneUtil = PhoneNumberUtil.getInstance()
-        val phoneNumber = phoneUtil.parse(target, null)
-        return phoneUtil.isValidNumber(phoneNumber)
+        try {
+            if (!phone.contains("+")) {
+                phone = "+${phone}"
+            }
+            val phoneUtil = PhoneNumberUtil.getInstance()
+            val phoneNumber = phoneUtil.parse(phone, null)
+            return phoneUtil.isValidNumber(phoneNumber)
+        } catch(e: Exception) {
+            return false
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

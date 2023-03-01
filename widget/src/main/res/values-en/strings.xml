@@ -24,7 +24,7 @@
     <string name="name">Name</string>
     <string name="surname">Surname</string>
     <string name="email">E-mail</string>
-    <string name="phone">Phone</string>
+    <string name="phone">Phone (With country code)</string>
     <string name="nameHint">Please enter your name</string>
     <string name="surnameHint">Please enter your surname</string>
     <string name="emailHint">Please enter your email</string>
