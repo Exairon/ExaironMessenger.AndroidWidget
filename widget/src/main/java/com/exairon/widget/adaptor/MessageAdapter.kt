@@ -521,6 +521,10 @@ class MessageAdapter(
                     context.onBackPressed()
                 }
 
+                convertView.findViewById<Button>(R.id.cancelSurveyBtn).setOnClickListener {
+                    context.onBackPressed()
+                }
+
                 val imageButtons = ArrayList<ImageButton>()
                 imageButtons.add(convertView.findViewById(R.id.survey1))
                 imageButtons.add(convertView.findViewById(R.id.survey2))

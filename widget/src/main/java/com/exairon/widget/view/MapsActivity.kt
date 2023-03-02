@@ -78,16 +78,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     requestPermissions()
                     return
                 }
-                fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
-                    val location: Location? = task.result
-                    if(location == null) {
-                        //location null
-                    } else {
-                        selectedLocation = LatLng(location.latitude, location.longitude)
-                        mGoogleMap.addMarker(MarkerOptions().position(selectedLocation!!).title("Current Location"))
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation!!, 16.0f))
+                try {
+                    fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
+                        val location: Location? = task.result
+                        if(location == null) {
+                            //location null
+                        } else {
+                            selectedLocation = LatLng(location.latitude, location.longitude)
+                            mGoogleMap.addMarker(MarkerOptions().position(selectedLocation!!).title("Current Location"))
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation!!, 16.0f))
+                        }
                     }
+                } catch (e: Exception) {
+
                 }
+
             } else {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)

@@ -36,6 +36,7 @@ tools:context=".view.ChatActivity">
             android:id="@+id/chat_avatar"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            app:strokeColor="@null"
             android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/back_button"
