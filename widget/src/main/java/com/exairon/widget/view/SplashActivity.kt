@@ -225,7 +225,7 @@ class SplashActivity : AppCompatActivity() {
 
         chatActivityViewModel.getWidgetSettings(channelIdParams)!!.observe(this, Observer { widgetSettingsData ->
             try {
-                WidgetSettings.getInstance(widgetSettingsData.data, widgetSettingsData.geo, widgetSettingsData.status, widgetSettingsData.triggerRules)
+                WidgetSettings.getInstance(widgetSettingsData?.data, widgetSettingsData?.geo, widgetSettingsData?.status, widgetSettingsData?.triggerRules)
 
                 val botMessageDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corner_customer)
                 val userMessageDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corner_bot)
@@ -241,12 +241,12 @@ class SplashActivity : AppCompatActivity() {
                 val backButtonWrappedDrawable = DrawableCompat.wrap(backButtonDrawable!!)
                 val buttonBackgroundWrappedDrawable = DrawableCompat.wrap(buttonBackgroundDrawable!!)
 
-                DrawableCompat.setTint(botWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.botMessageBackColor))
-                DrawableCompat.setTint(userWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.userMessageBackColor))
-                DrawableCompat.setTint(closeChatWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
-                DrawableCompat.setTint(closeSessionWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
-                DrawableCompat.setTint(backButtonWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
-                DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.buttonBackColor))
+                DrawableCompat.setTint(botWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.botMessageBackColor))
+                DrawableCompat.setTint(userWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.userMessageBackColor))
+                DrawableCompat.setTint(closeChatWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.headerFontColor))
+                DrawableCompat.setTint(closeSessionWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.headerFontColor))
+                DrawableCompat.setTint(backButtonWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.headerFontColor))
+                DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.buttonBackColor))
 
                 mSocket.emit("session_request", JSONObject(Gson().toJson(req)) )
             } catch (e: Exception) {

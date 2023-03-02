@@ -13,11 +13,11 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class ChatActivityViewModel : ViewModel() {
-    var widgetSettingsServicesLiveData: MutableLiveData<WidgetSettings>? = null
+    var widgetSettingsServicesLiveData: MutableLiveData<WidgetSettings?>? = null
     var messagesServicesLiveData: MutableLiveData<MessagesModel>? = null
     var uploadFileServicesLiveData: MutableLiveData<FileUploadResponse>? = null
 
-    fun getWidgetSettings(channelId: String) : LiveData<WidgetSettings>? {
+    fun getWidgetSettings(channelId: String) : LiveData<WidgetSettings?>? {
         widgetSettingsServicesLiveData = getWidgetSettingsServicesApiCall(channelId)
         return widgetSettingsServicesLiveData
     }

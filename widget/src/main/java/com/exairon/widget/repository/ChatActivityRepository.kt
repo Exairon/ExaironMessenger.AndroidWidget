@@ -13,11 +13,11 @@ import retrofit2.Callback
 import retrofit2.Response
 
 object ChatActivityRepository {
-    val widgetSettingsServiceSetterGetter = MutableLiveData<WidgetSettings>()
+    val widgetSettingsServiceSetterGetter = MutableLiveData<WidgetSettings?>()
     val messagesServiceSetterGetter = MutableLiveData<MessagesModel>()
     val uploadFileServiceSetterGetter = MutableLiveData<FileUploadResponse>()
 
-    fun getWidgetSettingsServicesApiCall(channelId: String): MutableLiveData<WidgetSettings> {
+    fun getWidgetSettingsServicesApiCall(channelId: String): MutableLiveData<WidgetSettings?> {
 
         val call = RetrofitClient.apiInterface.getWidgetSettings(channelId)
 
@@ -33,12 +33,16 @@ object ChatActivityRepository {
             ) {
                 // TODO("Not yet implemented")
                 Log.v("DEBUG : ", response.body().toString())
+                try {
+                    val data = response.body()
 
-                val data = response.body()
+                    val msg = data!!
 
-                val msg = data!!
+                    widgetSettingsServiceSetterGetter.value = msg
+                } catch (e: Exception) {
+                    widgetSettingsServiceSetterGetter.value = null
+                }
 
-                widgetSettingsServiceSetterGetter.value = msg
             }
         })
 
