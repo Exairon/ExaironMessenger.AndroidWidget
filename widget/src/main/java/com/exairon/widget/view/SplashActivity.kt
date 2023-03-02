@@ -180,10 +180,10 @@ class SplashActivity : AppCompatActivity() {
                     val formFields = widgetSettingsData.data?.formFields
                     if ((req.session_id == null || req.session_id == "") &&
                         (widgetSettingsData.data?.showUserForm!! &&
-                                formFields?.showNameField!! && (userName == null || userName == "") && user?.name == null ||
-                                formFields?.showSurnameField!! && (userSurname == null || userSurname == "") && user?.surname == null ||
-                                formFields.showEmailField && (userEmail == null || userEmail == "") && user?.email == null ||
-                                formFields.showPhoneField && (userPhone == null ||userPhone == "") && user?.phone == null)
+                                (formFields?.showNameField!! && (userName == null || userName == "") && user?.name == null) ||
+                                (formFields?.showSurnameField!! && (userSurname == null || userSurname == "") && user?.surname == null) ||
+                                (formFields.showEmailField && (userEmail == null || userEmail == "") && user?.email == null) ||
+                                (formFields.showPhoneField && (userPhone == null ||userPhone == "") && user?.phone == null))
                     ) {
                         InitialUser.getInstance(userEmail, userName, userPhone, userSurname, user_unique_id = Exairon.user_unique_id)
                         StateManager.tempSession = Session(
@@ -220,35 +220,46 @@ class SplashActivity : AppCompatActivity() {
         }
 
         chatActivityViewModel.getWidgetSettings(channelIdParams)!!.observe(this, Observer { widgetSettingsData ->
-            WidgetSettings.getInstance(widgetSettingsData.data, widgetSettingsData.geo, widgetSettingsData.status, widgetSettingsData.triggerRules)
+            try {
+                WidgetSettings.getInstance(widgetSettingsData.data, widgetSettingsData.geo, widgetSettingsData.status, widgetSettingsData.triggerRules)
 
-            val botMessageDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corner_customer)
-            val userMessageDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corner_bot)
-            val closeChatDrawable = AppCompatResources.getDrawable(context, R.drawable.close_chat)
-            val closeSessionDrawable = AppCompatResources.getDrawable(context, R.drawable.close_session)
-            val backButtonDrawable = AppCompatResources.getDrawable(context, R.drawable.back)
-            val buttonBackgroundDrawable = AppCompatResources.getDrawable(context, R.drawable.button_background_color)
+                val botMessageDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corner_customer)
+                val userMessageDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corner_bot)
+                val closeChatDrawable = AppCompatResources.getDrawable(context, R.drawable.close_chat)
+                val closeSessionDrawable = AppCompatResources.getDrawable(context, R.drawable.close_session)
+                val backButtonDrawable = AppCompatResources.getDrawable(context, R.drawable.back)
+                val buttonBackgroundDrawable = AppCompatResources.getDrawable(context, R.drawable.button_background_color)
 
-            val botWrappedDrawable = DrawableCompat.wrap(botMessageDrawable!!)
-            val userWrappedDrawable = DrawableCompat.wrap(userMessageDrawable!!)
-            val closeChatWrappedDrawable = DrawableCompat.wrap(closeChatDrawable!!)
-            val closeSessionWrappedDrawable = DrawableCompat.wrap(closeSessionDrawable!!)
-            val backButtonWrappedDrawable = DrawableCompat.wrap(backButtonDrawable!!)
-            val buttonBackgroundWrappedDrawable = DrawableCompat.wrap(buttonBackgroundDrawable!!)
+                val botWrappedDrawable = DrawableCompat.wrap(botMessageDrawable!!)
+                val userWrappedDrawable = DrawableCompat.wrap(userMessageDrawable!!)
+                val closeChatWrappedDrawable = DrawableCompat.wrap(closeChatDrawable!!)
+                val closeSessionWrappedDrawable = DrawableCompat.wrap(closeSessionDrawable!!)
+                val backButtonWrappedDrawable = DrawableCompat.wrap(backButtonDrawable!!)
+                val buttonBackgroundWrappedDrawable = DrawableCompat.wrap(buttonBackgroundDrawable!!)
 
-            DrawableCompat.setTint(botWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.botMessageBackColor))
-            DrawableCompat.setTint(userWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.userMessageBackColor))
-            DrawableCompat.setTint(closeChatWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
-            DrawableCompat.setTint(closeSessionWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
-            DrawableCompat.setTint(backButtonWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
-            DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.buttonBackColor))
+                DrawableCompat.setTint(botWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.botMessageBackColor))
+                DrawableCompat.setTint(userWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.userMessageBackColor))
+                DrawableCompat.setTint(closeChatWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
+                DrawableCompat.setTint(closeSessionWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
+                DrawableCompat.setTint(backButtonWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.headerFontColor))
+                DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettingsData.data?.color?.buttonBackColor))
 
-            mSocket.emit("session_request", JSONObject(Gson().toJson(req)) )
+                mSocket.emit("session_request", JSONObject(Gson().toJson(req)) )
+            } catch (e: Exception) {
+                this.onBackPressed()
+            }
+
         })
     }
 
     override fun onDestroy() {
         mSocket.off("session_confirm")
         super.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        Exairon.isActive = false
+        super.onBackPressed()
     }
 }
