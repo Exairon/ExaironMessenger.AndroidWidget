@@ -166,56 +166,60 @@ class SplashActivity : AppCompatActivity() {
         }
 
         mSocket.on("session_confirm") { args ->
-            if (args[0] != null) {
-                val convId = args[0] as String
-                val userToken = if (session.userToken == null || session.userToken == "") {
-                    UUID.randomUUID().toString()
-                } else {
-                    session.userToken.toString()
-                }
-                val session = Session(convId, req.channel_id, userToken)
-                if (!launchedActivity) {
-                    launchedActivity = true
-                    val widgetSettingsData = WidgetSettings.getInstance()
-                    val formFields = widgetSettingsData.data?.formFields
-                    if ((req.session_id == null || req.session_id == "") &&
-                        (widgetSettingsData.data?.showUserForm!! &&
-                                (formFields?.showNameField!! && (userName == null || userName == "") && user?.name == null) ||
-                                (formFields?.showSurnameField!! && (userSurname == null || userSurname == "") && user?.surname == null) ||
-                                (formFields.showEmailField && (userEmail == null || userEmail == "") && user?.email == null) ||
-                                (formFields.showPhoneField && (userPhone == null ||userPhone == "") && user?.phone == null))
-                    ) {
-                        InitialUser.getInstance(userEmail, userName, userPhone, userSurname, user_unique_id = Exairon.user_unique_id)
-                        StateManager.tempSession = Session(
-                            conversationId = convId,
-                            channelId = req.channel_id,
-                            userToken = userToken
-                        )
-                        val intent = Intent(this, FormActivity::class.java)
-                        startActivity(intent)
+            try {
+                if (args[0] != null) {
+                    val convId = args[0] as String
+                    val userToken = if (session.userToken == null || session.userToken == "") {
+                        UUID.randomUUID().toString()
                     } else {
-                        User.getInstance(
-                            name = user?.name ?: userName,
-                            surname = user?.surname ?: userSurname,
-                            email = user?.email ?: userEmail,
-                            phone = user?.phone ?: userPhone,
-                            user_unique_id = Exairon.user_unique_id)
-                        if (req.session_id == null || req.session_id == "") {
-                            writeSessionInfo(session)
-                        }
-                        if (Exairon.channelId != session.channelId.toString() && req.channel_id != null) {
-                            StateManager.channelId = req.channel_id
-                            StateManager.conversationId = convId
-                            StateManager.userToken = userToken
+                        session.userToken.toString()
+                    }
+                    val session = Session(convId, req.channel_id, userToken)
+                    if (!launchedActivity) {
+                        launchedActivity = true
+                        val widgetSettingsData = WidgetSettings.getInstance()
+                        val formFields = widgetSettingsData.data?.formFields
+                        if ((req.session_id == null || req.session_id == "") &&
+                            (widgetSettingsData.data?.showUserForm!! &&
+                                    (formFields?.showNameField!! && (userName == null || userName == "") && user?.name == null) ||
+                                    (formFields?.showSurnameField!! && (userSurname == null || userSurname == "") && user?.surname == null) ||
+                                    (formFields.showEmailField && (userEmail == null || userEmail == "") && user?.email == null) ||
+                                    (formFields.showPhoneField && (userPhone == null ||userPhone == "") && user?.phone == null))
+                        ) {
+                            InitialUser.getInstance(userEmail, userName, userPhone, userSurname, user_unique_id = Exairon.user_unique_id)
+                            StateManager.tempSession = Session(
+                                conversationId = convId,
+                                channelId = req.channel_id,
+                                userToken = userToken
+                            )
+                            val intent = Intent(this, FormActivity::class.java)
+                            startActivity(intent)
                         } else {
-                            StateManager.channelId = session.channelId.toString()
-                            StateManager.conversationId = convId
-                            StateManager.userToken = userToken
+                            User.getInstance(
+                                name = user?.name ?: userName,
+                                surname = user?.surname ?: userSurname,
+                                email = user?.email ?: userEmail,
+                                phone = user?.phone ?: userPhone,
+                                user_unique_id = Exairon.user_unique_id)
+                            if (req.session_id == null || req.session_id == "") {
+                                writeSessionInfo(session)
+                            }
+                            if (Exairon.channelId != session.channelId.toString() && req.channel_id != null) {
+                                StateManager.channelId = req.channel_id
+                                StateManager.conversationId = convId
+                                StateManager.userToken = userToken
+                            } else {
+                                StateManager.channelId = session.channelId.toString()
+                                StateManager.conversationId = convId
+                                StateManager.userToken = userToken
+                            }
+                            val intent = Intent(this, ChatActivity::class.java)
+                            startActivity(intent)
                         }
-                        val intent = Intent(this, ChatActivity::class.java)
-                        startActivity(intent)
                     }
                 }
+            } catch (e: Exception) {
+                this.onBackPressed()
             }
         }
 
