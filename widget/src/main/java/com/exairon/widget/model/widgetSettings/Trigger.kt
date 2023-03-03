@@ -1,7 +1,8 @@
 package com.exairon.widget.model.widgetSettings
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
-
+@Keep
 data class Trigger (
     @SerializedName("when")
     val _when: String? = null,

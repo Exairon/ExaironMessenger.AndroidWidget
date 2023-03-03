@@ -1,7 +1,9 @@
 package com.exairon.widget.model
 
 import android.location.Location
+import androidx.annotation.Keep
 
+@Keep
 data class FileMessageModel(
     val document: String?,
     val mimeType: String?,

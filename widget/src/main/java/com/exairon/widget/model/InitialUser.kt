@@ -1,5 +1,8 @@
 package com.exairon.widget.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class InitialUser(
     val email: String? = null,
     val name: String? = null,
