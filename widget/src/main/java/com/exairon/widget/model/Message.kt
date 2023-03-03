@@ -1,8 +1,5 @@
 package com.exairon.widget.model
 
-import androidx.annotation.Keep
-
-@Keep
 data class Message(
     var id: String? = null,
     val text: String? = null,

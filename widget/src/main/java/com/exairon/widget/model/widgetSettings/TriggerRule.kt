@@ -1,8 +1,5 @@
 package com.exairon.widget.model.widgetSettings
 
-import androidx.annotation.Keep
-
-@Keep
 data class TriggerRule (
     val trigger: Trigger? = null,
     val enabled: Boolean? = null,

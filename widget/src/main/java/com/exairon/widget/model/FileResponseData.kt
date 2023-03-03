@@ -1,8 +1,5 @@
 package com.exairon.widget.model
 
-import androidx.annotation.Keep
-
-@Keep
 class FileResponseData (
     val url: String? = null,
     val mimeType: String? = null,

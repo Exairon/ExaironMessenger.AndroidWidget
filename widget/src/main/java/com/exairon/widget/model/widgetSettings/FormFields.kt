@@ -1,8 +1,5 @@
 package com.exairon.widget.model.widgetSettings
 
-import androidx.annotation.Keep
-
-@Keep
 data class FormFields(
     val emailFieldRequired: Boolean,
     val nameFieldRequired: Boolean,

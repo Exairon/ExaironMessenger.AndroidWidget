@@ -1,8 +1,5 @@
 package com.exairon.widget.model.widgetSettings
 
-import androidx.annotation.Keep
-
-@Keep
 data class Message(
     val headerMessage: String,
     val headerTitle: String,

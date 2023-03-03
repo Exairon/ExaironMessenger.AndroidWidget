@@ -1,15 +1,10 @@
 package com.exairon.widget.model
 
-import android.location.Location
-import androidx.annotation.Keep
-
-@Keep
 data class FileMessageModel(
     val document: String?,
     val mimeType: String?,
     val originalname: String?,
 )
-
 data class SendFileMessageModel(
     val channel_id: String,
     val message: FileMessageModel?,
@@ -17,7 +12,6 @@ data class SendFileMessageModel(
     val userToken: String,
     val user: User
 )
-
 data class LocationDataModel(
     val latitude: Double,
     val longitude: Double,
@@ -33,7 +27,6 @@ data class SendLocationMessageModel(
     val userToken: String,
     val user: User
 )
-
 data class SendMessageModel(
     val channel_id: String,
     val message: String?,

@@ -1,8 +1,5 @@
 package com.exairon.widget.model
 
-import androidx.annotation.Keep
-
-@Keep
 class Payload (
     var src: String? = null,
     var videoType: String? = null,

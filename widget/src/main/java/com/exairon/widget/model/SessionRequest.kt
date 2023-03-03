@@ -1,8 +1,5 @@
 package com.exairon.widget.model
 
-import androidx.annotation.Keep
-
-@Keep
 class SessionRequest(
     val session_id: String? = null,
     val channel_id: String? = null
