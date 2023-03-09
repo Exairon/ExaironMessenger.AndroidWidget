@@ -460,11 +460,6 @@ class ChatActivity : AppCompatActivity() {
 
     private fun clearSessionInfo() {
         val session = getSessionInfo()
-        if (session.channelId != null && session.userToken != null) {
-            StateManager.conversationId = ""
-            StateManager.channelId = session.channelId!!
-            StateManager.userToken = session.userToken!!
-        }
         val xmlString = "<root>" +
                 "<sessionId></sessionId>" +
                 "<channelId>${session.channelId}</channelId>" +
