@@ -13,8 +13,8 @@ tools:context=".view.ChatActivity">
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:paddingRight="30dp"
-        android:paddingLeft="30dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:fitsSystemWindows="true"
@@ -24,12 +24,12 @@ tools:context=".view.ChatActivity">
 
         <ImageButton
             android:id="@+id/back_button"
-            android:background="@drawable/back"
-            android:layout_width="12dp"
+            android:layout_width="24dp"
             android:layout_height="24dp"
+            android:background="@drawable/back_icon"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/chat_avatar"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -75,8 +75,7 @@ tools:context=".view.ChatActivity">
             android:id="@+id/close_session"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/close_session"
-            android:padding="15dp"
+            android:background="@drawable/close_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -102,12 +101,12 @@ tools:context=".view.ChatActivity">
 
     </ListView>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:layout_editor_absoluteX="16dp">
 
         <TextView
             android:id="@+id/form_field_title"
@@ -123,11 +122,11 @@ tools:context=".view.ChatActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="true"
-            android:text=""
-            android:singleLine="true"
             android:focusableInTouchMode="true"
             android:imeOptions="actionDone|flagNoEnterAction"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:singleLine="true"
+            android:text="" />
 
     </LinearLayout>
 
@@ -173,8 +172,8 @@ tools:context=".view.ChatActivity">
 
         <ImageButton
             android:id="@+id/openMenu"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/plus"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
