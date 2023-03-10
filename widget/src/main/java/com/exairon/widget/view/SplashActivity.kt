@@ -28,7 +28,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
-import kotlin.collections.ArrayList
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -223,6 +222,7 @@ class SplashActivity : AppCompatActivity() {
             }
         }
 
+        var session_request = false
         chatActivityViewModel.getWidgetSettings(channelIdParams)!!.observe(this, Observer { widgetSettingsData ->
             try {
                 WidgetSettings.getInstance(widgetSettingsData?.data, widgetSettingsData?.geo, widgetSettingsData?.status, widgetSettingsData?.triggerRules)
@@ -247,8 +247,10 @@ class SplashActivity : AppCompatActivity() {
                 DrawableCompat.setTint(closeSessionWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.headerFontColor))
                 DrawableCompat.setTint(backButtonWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.headerFontColor))
                 DrawableCompat.setTint(buttonBackgroundWrappedDrawable, Color.parseColor(widgetSettingsData?.data?.color?.buttonBackColor))
-
-                mSocket.emit("session_request", JSONObject(Gson().toJson(req)) )
+                if (!session_request) {
+                    mSocket.emit("session_request", JSONObject(Gson().toJson(req)))
+                    session_request = true
+                }
             } catch (e: Exception) {
                 this.onBackPressed()
             }
